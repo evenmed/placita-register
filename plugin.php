@@ -3,16 +3,16 @@
 Plugin Name: La Placita Register
 Plugin URI: http://laplacita.church/
 Description: Plugin to create and handle the Baptism Pre-Register form
-Version: 2.0
+Version: 3.0
 Author: Emilio Venegas
 Author URI: http://www.emiliovenegas.me
 License: GPL2
 */
 
 global $placita_db_version;
-$placita_db_version = '1.6.1';
+$placita_db_version = '1.6.5';
 
-// CReate db on plugin activation
+// Create or update db
 function placita_install_db() {
     global $placita_db_version;
     
@@ -70,7 +70,7 @@ function placita_install_db() {
             godmother_catholic tinyint(1) DEFAULT '0' NOT NULL,
             note text NULL,
             bautismal_code varchar(255) NULL,
-            benches enum('A','B','C','D','E') NULL,
+            benches enum('A1','B1','C1','D1','E1','A2','B2','C2','D2','E2','A3','B3','C3','D3','E3','A4','B4','C4','D4','E4','A5','B5','C5','D5','E5','A6','B6','C6','D6','E6','A7','B7','C7','D7','E7','A8','B8','C8','D8','E8','A9','B9','C9','D9','E9','A10','B10','C10','D10','E10','A11','B11','C11','D11','E11','A12','B12','C12','D12','E12','A13','B13','C13','D13','E13','A14','B14','C14','D14','E14','A15','B15','C15','D15','E15','A16','B16','C16','D16','E16','A17','B17','C17','D17','E17') NULL,
             priest varchar(255) NULL,
             file varchar(255) NULL,
             amount_collected decimal(13,2) DEFAULT '0.00' NOT NULL,
@@ -87,7 +87,63 @@ function placita_install_db() {
         
     }
 }
-register_activation_hook( __FILE__, 'placita_install_db' );
+
+// Plugin activation scripts
+function placita_activation() {
+    placita_install_db();
+
+    add_role(
+        'baptism_registry_manager',
+        __('Baptism Registry Manager', 'laplacita'),
+        array(
+            'read' => true,
+            'manage_baptism' => true
+        )
+    );
+}
+register_activation_hook( __FILE__, 'placita_activation' );
+
+function wporg_simple_role_caps()
+{
+    // gets the baptism_registry_manager role object
+    $role = get_role('baptism_registry_manager');
+    $role->add_cap('manage_baptism', true);
+
+    // gets the baptism_registry_manager role object
+    $role = get_role('administrator');
+    $role->add_cap('manage_baptism', true);
+}
+ 
+// add simple_role capabilities, priority must be after the initial role definition
+add_action('init', 'wporg_simple_role_caps', 11);
+
+// Baptism Registry Manager limitations
+function plaita_baptism_manager_hide_the_dashboard() {
+    global $current_user;
+    // is there a user ?
+    if ( is_array( $current_user->roles ) ) {
+        // substitute your role(s):
+        if ( in_array( 'baptism_registry_manager', $current_user->roles ) ) {
+            // hide the dashboard:
+            remove_menu_page( 'index.php' );
+        }
+    }
+}
+add_action( 'admin_menu', 'plaita_baptism_manager_hide_the_dashboard' );
+
+function placita_baptism_manager_login_redirect( $redirect_to, $request, $user ){
+    // is there a user ?
+    if ( is_array( $user->roles ) ) {
+        // substitute your role(s):
+        if ( in_array( 'baptism_registry_manager', $user->roles ) ) {
+            // pick where to redirect to, in the example: Posts page
+            return admin_url( 'admin.php?page=baptism_registers' );
+        } else {
+            return admin_url();
+        }
+    }
+}
+add_filter( 'login_redirect', 'placita_baptism_manager_login_redirect', 10, 3 );
 
 // Update db if necessary
 function placita_update_db_check() {
@@ -459,14 +515,14 @@ function placita_update_registry() {
             if (
                 in_array( 
                     $v, 
-                    array('A', 'B', 'C', 'D', 'E')
+                    array('A1','B1','C1','D1','E1','A2','B2','C2','D2','E2','A3','B3','C3','D3','E3','A4','B4','C4','D4','E4','A5','B5','C5','D5','E5','A6','B6','C6','D6','E6','A7','B7','C7','D7','E7','A8','B8','C8','D8','E8','A9','B9','C9','D9','E9','A10','B10','C10','D10','E10','A11','B11','C11','D11','E11','A12','B12','C12','D12','E12','A13','B13','C13','D13','E13','A14','B14','C14','D14','E14','A15','B15','C15','D15','E15','A16','B16','C16','D16','E16','A17','B17','C17','D17','E17')
                 )
             ) {
                 $value = $v;
             } else {
                 wp_send_json( array(
                     'success' => 0,
-                    'message' => __("Please choose benches A, B, C, D or E", 'laplacita')
+                    'message' => __("Please choose a valid bench number", 'laplacita')
                  ) );
             }
             break;
@@ -503,9 +559,6 @@ function placita_update_registry() {
             case 'birthdate':
                 $date = date_create_from_format('Y-m-d', $dbVal);
                 $value = $date ? $date->format('Y/m/d') : '';
-                break;
-            case 'benches':
-                $value = $dbVal . '1 - ' . $dbVal . '17';
                 break;
             default:
                 $value = $dbVal;
@@ -647,9 +700,8 @@ function user_has_incomplete_child($userid = false) { // Checks if the passed us
 
 
 add_action( 'admin_menu', 'my_admin_menu' );
-
 function my_admin_menu() {
-	add_menu_page( 'Baptism Registers', 'Baptism Registers', 'manage_options', 'baptism_registers', 'baptism_registers_page', 'dashicons-admin-page', 6  );
+    add_menu_page( 'Baptism Registers', 'Baptism Registers', 'manage_baptism', 'baptism_registers', 'baptism_registers_page', 'dashicons-admin-page', 6  );
 }
 
 function baptism_registers_page() {
@@ -663,8 +715,8 @@ function baptism_registers_page() {
   ?>
   <div class="wrap">
 
-      <div id="icon-users" class="icon32"><br/></div>
-      <h2>Baptsim Pre-registers</h2>
+      <h2>Baptism Pre-registers</h2>
+      <img width=200 src="<?php echo plugin_dir_url(__FILE__) . 'media/images/outline-logo-b.png' ?>" />
 
       <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
       <form id="movies-filter" method="get">
