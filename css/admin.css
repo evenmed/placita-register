@@ -1,0 +1,15 @@
+.registry-update {
+    display: none;
+}
+
+.registry-update.loading {
+    width: calc(100% - 30px);
+}
+
+.edit-registry-field {
+    white-space: nowrap;
+}
+
+.edit-registry-field.show-input ~ .registry-update {
+    display: block;
+}

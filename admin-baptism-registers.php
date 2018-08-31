@@ -94,8 +94,8 @@ class Placita_List_Table extends WP_List_Table {
                 
         //Set parent defaults
         parent::__construct( array(
-            'singular'  => 'movie',     //singular name of the listed records
-            'plural'    => 'movies',    //plural name of the listed records
+            'singular'  => 'register',     //singular name of the listed records
+            'plural'    => 'registers',    //plural name of the listed records
             'ajax'      => false        //does this table support ajax?
         ) );
         
