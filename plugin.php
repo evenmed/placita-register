@@ -702,6 +702,7 @@ function user_has_incomplete_child($userid = false) { // Checks if the passed us
 add_action( 'admin_menu', 'my_admin_menu' );
 function my_admin_menu() {
     add_menu_page( 'Baptism Registers', 'Baptism Registers', 'manage_baptism', 'baptism_registers', 'baptism_registers_page', 'dashicons-admin-page', 6  );
+    add_menu_page( 'Baptism Registers PDFs', 'Baptism Registers PDFs', 'manage_baptism', 'baptism_registers_pdfs', 'baptism_registers_pdfs_page', 'dashicons-admin-page', 7  );
 }
 
 function baptism_registers_page() {
@@ -724,6 +725,32 @@ function baptism_registers_page() {
           <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
           <!-- Search Form -->
           <?php $testListTable->search_box('Search', 'search'); ?>
+          <!-- Now we can render the completed list table -->
+          <?php $testListTable->display() ?>
+      </form>
+
+  </div>
+  <?php
+}
+
+function baptism_registers_pdfs_page() {
+  require_once('admin-baptism-registers.php');
+    
+  //Create an instance of our package class...
+  $testListTable = new Placita_List_Table();
+  //Fetch, prepare, sort, and filter our data...
+  $testListTable->prepare_items();
+
+  ?>
+  <div class="wrap">
+
+      <h2>Baptism Pre-registers</h2>
+      <img width=200 src="<?php echo plugin_dir_url(__FILE__) . 'media/images/outline-logo-b.png' ?>" />
+
+      <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
+      <form id="movies-filter" method="get">
+          <!-- For plugins, we also need to ensure that the form posts back to our current page -->
+          <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
           <!-- Now we can render the completed list table -->
           <?php $testListTable->display() ?>
       </form>
