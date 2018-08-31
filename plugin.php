@@ -107,11 +107,13 @@ function wporg_simple_role_caps()
 {
     // gets the baptism_registry_manager role object
     $role = get_role('baptism_registry_manager');
-    $role->add_cap('manage_baptism', true);
+    if ($role)
+        $role->add_cap('manage_baptism', true);
 
     // gets the baptism_registry_manager role object
     $role = get_role('administrator');
-    $role->add_cap('manage_baptism', true);
+    if ($role)
+        $role->add_cap('manage_baptism', true);
 }
  
 // add simple_role capabilities, priority must be after the initial role definition
