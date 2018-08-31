@@ -10,7 +10,7 @@ License: GPL2
 */
 
 global $placita_db_version;
-$placita_db_version = '1.6.5';
+$placita_db_version = '1.6.10';
 
 // Create or update db
 function placita_install_db() {
@@ -75,8 +75,8 @@ function placita_install_db() {
             file varchar(255) NULL,
             amount_collected decimal(13,2) DEFAULT '0.00' NOT NULL,
             baptism_date datetime NULL,
-            date datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            lastedited datetime ON UPDATE CURRENT_TIMESTAMP,
+            date timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            lastedited timestamp ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
