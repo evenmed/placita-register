@@ -58,7 +58,7 @@
         }
     });
 
-    $('.input_priest, .input_amount_collected, .input_benches')
+    $('.registry-update:not(.datetimepicker)')
         .change(function() {
             registryUpdate($(this));
         });
@@ -94,10 +94,9 @@
 
                 editRegistryLink.removeClass('show-input');
 
-                console.log(r)
-
                 if ( r.success == 1 ) {
-                    $this.after('<span style="color:green;">'+ r.message +'</span>');
+                    $this
+                        .after('<span style="color:green;">'+ r.message +'</span>');
                     fieldValLabel.text(r.value);
     
                     setTimeout( function() {

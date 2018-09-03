@@ -10,7 +10,7 @@ License: GPL2
 */
 
 global $placita_db_version;
-$placita_db_version = '1.6.10';
+$placita_db_version = '1.6.11';
 
 // Create or update db
 function placita_install_db() {
@@ -75,6 +75,9 @@ function placita_install_db() {
             file varchar(255) NULL,
             amount_collected decimal(13,2) DEFAULT '0.00' NOT NULL,
             baptism_date datetime NULL,
+            is_canceled tinyint(1) DEFAULT 0 NOT NULL,
+            is_noshow tinyint(1) DEFAULT 0 NOT NULL,
+            is_private tinyint(1) DEFAULT 0 NOT NULL,
             date timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
             lastedited timestamp ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY  (id)
@@ -467,10 +470,17 @@ function placita_update_registry() {
     // Verify nonce and data
     if (
         wp_verify_nonce( $_REQUEST['_wpnonce'], 'placita_update_registry_nonce' ) !== 1 ||
-        ! in_array( 
-            $_REQUEST['field'], 
-            array('priest', 'amount_collected', 'baptism_date', 'benches', 'birthdate') 
-        ) ||
+        ! in_array( $_REQUEST['field'], 
+            array(
+                'priest',
+                'amount_collected',
+                'baptism_date',
+                'benches',
+                'birthdate',
+                'is_canceled',
+                'is_noshow',
+                'is_private',
+            ) ) ||
         ! $registry = intval($_REQUEST['registry'])
     ) {
         wp_send_json( array(
@@ -520,6 +530,7 @@ function placita_update_registry() {
                     array('A1','B1','C1','D1','E1','A2','B2','C2','D2','E2','A3','B3','C3','D3','E3','A4','B4','C4','D4','E4','A5','B5','C5','D5','E5','A6','B6','C6','D6','E6','A7','B7','C7','D7','E7','A8','B8','C8','D8','E8','A9','B9','C9','D9','E9','A10','B10','C10','D10','E10','A11','B11','C11','D11','E11','A12','B12','C12','D12','E12','A13','B13','C13','D13','E13','A14','B14','C14','D14','E14','A15','B15','C15','D15','E15','A16','B16','C16','D16','E16','A17','B17','C17','D17','E17')
                 )
             ) {
+                // placita_is_bench_available($registry, $v);
                 $value = $v;
             } else {
                 wp_send_json( array(
@@ -527,6 +538,11 @@ function placita_update_registry() {
                     'message' => __("Please choose a valid bench number", 'laplacita')
                  ) );
             }
+            break;
+        case 'is_canceled':
+        case 'is_noshow':
+        case 'is_private':
+            $value = intval($v) === 1 ? 1 : 0;
             break;
     }
 
@@ -562,14 +578,20 @@ function placita_update_registry() {
                 $date = date_create_from_format('Y-m-d', $dbVal);
                 $value = $date ? $date->format('Y/m/d') : '';
                 break;
+            case 'is_canceled':
+            case 'is_noshow':
+            case 'is_private':
+                $value = intval($v) === 1 ? 'Yes' : 'No';
+                break;
             default:
-                $value = $dbVal;
+                $value = stripslashes($dbVal);
                 break;
         }
         wp_send_json( array(
             'success' => 1,
             'message' => __("Saved!", 'laplacita'),
-            'value'   => $value
+            'value'   => $value,
+            'dbVal'   => $dbVal,
          ) );
     }
 
@@ -579,6 +601,41 @@ function placita_update_registry() {
         'value'   => $value
     ) );
 }
+
+/**
+ * Check if the bench is available for the registry
+ * 
+ * @param int    $id    the ID of the baptism registry
+ * @param string $bench the bench number to check availability for
+ * @return bool  true if the bench is abailable, false if it isn't
+ */
+// function placita_is_bench_available( $id, $bench ) {
+//     global $wpdb;
+//     $table_name = $wpdb->prefix . 'baptism_registers';
+
+//     // Get the baptism date of the registry
+//     $results = $wpdb->get_results(
+//         sprintf(
+//             "SELECT baptism_date
+//             FROM %s
+//             WHERE id = $id
+//             LIMIT 1",
+//             $table_name
+//         ),
+//         ARRAY_A
+//     );
+
+//     if ( 
+//         count($results) < 1 ||
+//         ! isset( $results[0]['baptism_date'] ) ||
+//         ! $results[0]['baptism_date']
+//     )
+//         return false;
+
+//     error_log($results[0]['baptism_date']);
+//     return true;
+
+// }
 
 // Generate and show the PDF for a specific registry
 function placita_baptism_register_view_pdf() {

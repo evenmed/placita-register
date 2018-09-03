@@ -45,6 +45,9 @@ class Baptism_Registers_Table extends WP_List_Table {
             'birthdate'        => __('Birth Date', 'laplacita'),
             'amount_collected' => __('Payment Collected', 'laplacita'),
             'benches'          => __('Benches', 'laplacita'),
+            'is_canceled'      => __('Canceled', 'laplacita'),
+            'is_noshow'        => __('No Show', 'laplacita'),
+            'is_private'       => __('Private', 'laplacita'),
         );
     }
 
@@ -91,7 +94,7 @@ class Baptism_Registers_Table extends WP_List_Table {
 
         $table_name = $wpdb->prefix . 'baptism_registers';
         $sql = sprintf(
-            'SELECT id, first_name, last_name, birthdate, father_phone, mother_phone, date, priest, baptism_date, amount_collected, benches
+            'SELECT id, first_name, last_name, birthdate, father_phone, mother_phone, date, priest, baptism_date, amount_collected, benches, is_canceled, is_noshow, is_private
             FROM %s %s
             ORDER BY date DESC',
             $table_name,
@@ -145,12 +148,14 @@ class Baptism_Registers_Table extends WP_List_Table {
             case 'last_name':
             case 'father_phone':
             case 'mother_phone':
+                return stripslashes($item[ $column_name ]);
+
             case 'date':
                 return $item[ $column_name ];
 
             case 'birthdate':
                 $date = date_create_from_format('Y-m-d', $item[ $column_name ]);
-                $value = $date ? $date->format('Y/m/d') : '';
+                $value = $date ? htmlentities($date->format('Y/m/d')) : '';
                 return '<span class="value-label">' . $value . '</span>' .
                 ' <a href="#" class="edit-registry-field">' . 
                     __('Edit', 'laplacita') .
@@ -158,14 +163,14 @@ class Baptism_Registers_Table extends WP_List_Table {
                 '</a>' .
                 "<input
                     name='$column_name'
-                    class='input_$column_name registry-update'
+                    class='input_$column_name registry-update datetimepicker'
                     data-registry='$id'
                     autocomplete='off'
-                    value='". $value ."'
+                    value='". htmlentities($value) ."'
                     />";
 
             case 'priest':
-                return '<span class="value-label">' . $item[ $column_name ] . '</span>' .
+                return '<span class="value-label">' . stripslashes($item[ $column_name ]) . '</span>' .
                 ' <a href="#" class="edit-registry-field">' . 
                     __('Edit', 'laplacita') .
                     '<span class="dashicons dashicons-edit"></span>' .
@@ -175,12 +180,12 @@ class Baptism_Registers_Table extends WP_List_Table {
                     class='input_$column_name registry-update'
                     data-registry='$id'
                     autocomplete='off'
-                    value='". $item[ $column_name ] ."'
+                    value=". htmlentities(stripslashes($item[ $column_name ])) ."
                     />";
 
             case 'baptism_date':
                 $date = date_create_from_format('Y-m-d H:i:s', $item[ $column_name ]);
-                $value = $date ? $date->format('Y/m/d H:i') : '';
+                $value = $date ? htmlentities($date->format('Y/m/d H:i')) : '';
                 return '<span class="value-label">' . $value . '</span>' .
                 ' <a href="#" class="edit-registry-field">' . 
                     __('Edit', 'laplacita') .
@@ -188,10 +193,10 @@ class Baptism_Registers_Table extends WP_List_Table {
                 '</a>' .
                 "<input
                     name='$column_name'
-                    class='input_$column_name registry-update'
+                    class='input_$column_name registry-update datetimepicker'
                     data-registry='$id'
                     autocomplete='off'
-                    value='". $value ."'
+                    value='". htmlentities($value) ."'
                     />";
 
             case 'amount_collected':
@@ -206,7 +211,7 @@ class Baptism_Registers_Table extends WP_List_Table {
                     name='$column_name'
                     class='input_$column_name registry-update'
                     data-registry='$id'
-                    value='". $item[ $column_name ] ."'
+                    value='". htmlentities($item[ $column_name ]) ."'
                     />";
 
             case 'benches':
@@ -398,6 +403,27 @@ class Baptism_Registers_Table extends WP_List_Table {
                     <option $benchE15 value='E15'>E15</option>
                     <option $benchE16 value='E16'>E16</option>
                     <option $benchE17 value='E17'>E17</option>
+                </select>";
+
+            case 'is_canceled':
+            case 'is_noshow':
+            case 'is_private':
+                $value = $item[ $column_name ];
+                $label = $value ? 'Yes' : 'No';
+                $yes   = $value ? 'selected' : '';
+                $no    = $value ? '' : 'selected';
+                return '<span class="value-label">' . $label . '</span>' .
+                ' <a href="#" class="edit-registry-field">' . 
+                    __('Edit', 'laplacita') .
+                    '<span class="dashicons dashicons-edit"></span>' .
+                '</a>' .
+                "<select
+                    name='$column_name'
+                    class='input_$column_name registry-update'
+                    data-registry='$id'
+                >
+                    <option $yes value='1'>Yes</option>
+                    <option $no value='0'>No</option>
                 </select>";
 
             default:
