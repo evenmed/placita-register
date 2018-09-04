@@ -540,12 +540,14 @@ function placita_update_registry() {
                     $bench_numbers
                 )
             ) {
-                if ( ! placita_is_bench_available($registry, $v) ) {
+                $maybe_current_bench = placita_is_bench_available($registry, $v);
+                if ( ! $maybe_current_bench ) {
                     wp_send_json( array(
                         'success' => 0,
                         'message' => __("That bench is not available at that time", 'laplacita')
                      ) );
                 }
+                $previous_bench = in_array($maybe_current_bench, $bench_numbers) ? $maybe_current_bench : false;
                 $value = $v;
             } else {
                 wp_send_json( array(
@@ -585,14 +587,43 @@ function placita_update_registry() {
             ARRAY_A
         );
         $dbVal = $results[0][$field];
+        $extra_fields = array();
         switch ($field) {
             case 'baptism_date':
                 $date = date_create_from_format('Y-m-d H:i:s', $dbVal);
                 $value = $date ? $date->format('Y/m/d H:i') : '';
+
+                // Get the benches that are already occupied at the baptism's datetime
+                global $bench_numbers, $wpdb;
+
+                $table_name = $wpdb->prefix . 'baptism_registers';
+                $unavailable_benches = array();
+
+                $results = $wpdb->get_results(
+                    sprintf(
+                        "SELECT benches
+                        FROM %s
+                        WHERE baptism_date = '$dbVal'
+                        AND id != $registry",
+                        $table_name
+                    ),
+                    ARRAY_A
+                );
+                if ( count($results) > 0 ) {
+                    foreach ( $results as $r ) {
+                        $unavailable_benches[] = $r['benches'];
+                    }
+                }
+                if ( count($unavailable_benches) > 0 )
+                    $extra_fields = array( 'unavailable_benches' => $unavailable_benches );
                 break;
             case 'birthdate':
                 $date = date_create_from_format('Y-m-d', $dbVal);
                 $value = $date ? $date->format('Y/m/d') : '';
+                break;
+            case 'benches':
+                if ($previous_bench)
+                    $extra_fields = array( 'previous_bench' => $maybe_current_bench );
                 break;
             case 'is_canceled':
             case 'is_noshow':
@@ -608,7 +639,7 @@ function placita_update_registry() {
             'message' => __("Saved!", 'laplacita'),
             'value'   => $value,
             'dbVal'   => $dbVal,
-         ) );
+         ) + $extra_fields );
     }
 
     wp_send_json( array(
@@ -625,16 +656,17 @@ function placita_update_registry() {
  * 
  * @param int    $id    the ID of the baptism registry
  * @param string $bench the bench number to check availability for
- * @return bool  true if the bench is abailable, false if it isn't
+ * @return bool/string  string indicating the previously selected bench 
+ * if the bench is available, false if it isn't
  */
 function placita_is_bench_available( $id, $bench ) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'baptism_registers';
 
-    // Get the baptism date of the registry
+    // Get the baptism date and current benches of the registry
     $results = $wpdb->get_results(
         sprintf(
-            "SELECT baptism_date
+            "SELECT baptism_date, benches
             FROM %s
             WHERE id = $id
             LIMIT 1",
@@ -657,6 +689,7 @@ function placita_is_bench_available( $id, $bench ) {
             FROM %s
             WHERE benches = '$bench'
             AND baptism_date = '$datetime'
+            And id != $id
             LIMIT 1",
             $table_name
         ),
@@ -666,7 +699,7 @@ function placita_is_bench_available( $id, $bench ) {
     if ( count($bench_results) > 0 )
         return false; // That bench is already assigned to a baptism at the same time
 
-    return true;
+    return $results[0]['benches'] ? $results[0]['benches'] : true;
 }
 
 // Generate and show the PDF for a specific registry

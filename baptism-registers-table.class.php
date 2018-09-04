@@ -215,13 +215,36 @@ class Baptism_Registers_Table extends WP_List_Table {
                     />";
 
             case 'benches':
-                global $bench_numbers;
+                global $bench_numbers, $wpdb;
+
+                // Get the benches that are already occupied at the baptism's datetime
+                $table_name = $wpdb->prefix . 'baptism_registers';
+                $unavailable_benches = array();
+                if ($baptism_date = $item['baptism_date']) {
+                    $results = $wpdb->get_results(
+                        sprintf(
+                            "SELECT benches
+                            FROM %s
+                            WHERE baptism_date = '$baptism_date'
+                            AND id != $id",
+                            $table_name
+                        ),
+                        ARRAY_A
+                    );
+                    if ( count($results) > 0 ) {
+                        foreach ( $results as $r ) {
+                            $unavailable_benches[] = $r['benches'];
+                        }
+                    }
+                }
+
                 $benches = $item[ $column_name ];
                 $benches_string = "";
 
                 foreach ($bench_numbers as $b) {
                     $selected = $benches == $b ? 'selected' : '';
-                    $benches_string .= "<option ". $selected ." value='$b'>$b</option>";
+                    $disabled = in_array( $b, $unavailable_benches ) ? "disabled='disabled'" : '';
+                    $benches_string .= "<option $selected $disabled value='$b'>$b</option>";
                 }
 
                 return '<span class="value-label">' . $benches . '</span>' .

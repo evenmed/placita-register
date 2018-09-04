@@ -99,8 +99,31 @@
                     fieldValLabel.text(r.value);
 
                     if ( field === 'baptism_date' ) {
+
                         $('.input_benches[data-registry='+ registry +']').val('')
+                            .find('option').each( function() { $(this).prop('disabled', false) } )
                             .prevAll('.value-label').text('').end();
+
+                        if ( r.unavailable_benches ) {
+                            r.unavailable_benches.forEach(function(b) {
+                                $('.input_benches[data-registry='+ registry +'] option[value='+ b +']').prop('disabled', true);
+                            });
+                        }
+
+                    } else if ( field === 'benches' && r.previous_bench ) {
+
+                        const baptism_date = $('.input_baptism_date[data-registry='+ registry +']').val();
+
+                        $('.input_baptism_date')
+                            .filter( function(){ return this.value==baptism_date } )
+                            .each( function() {
+                                const _registry = $(this).attr('data-registry');
+
+                                $('.input_benches[data-registry='+ _registry +'] option[value='+ r.previous_bench +']').prop('disabled', false);
+
+                                $('.input_benches[data-registry='+ _registry +'] option[value='+ r.value +']').prop('disabled', true);
+                            } );
+                        
                     }
     
                     setTimeout( function() {
