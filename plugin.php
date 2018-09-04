@@ -604,7 +604,8 @@ function placita_update_registry() {
                         "SELECT benches
                         FROM %s
                         WHERE baptism_date = '$dbVal'
-                        AND id != $registry",
+                        AND id != $registry
+                        AND is_canceled = 0",
                         $table_name
                     ),
                     ARRAY_A
@@ -689,6 +690,7 @@ function placita_is_bench_available( $id, $bench ) {
             FROM %s
             WHERE benches = '$bench'
             AND baptism_date = '$datetime'
+            AND is_canceled = 0
             And id != $id
             LIMIT 1",
             $table_name

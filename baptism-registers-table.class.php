@@ -226,7 +226,8 @@ class Baptism_Registers_Table extends WP_List_Table {
                             "SELECT benches
                             FROM %s
                             WHERE baptism_date = '$baptism_date'
-                            AND id != $id",
+                            AND id != $id
+                            AND is_canceled = 0",
                             $table_name
                         ),
                         ARRAY_A
