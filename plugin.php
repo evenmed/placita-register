@@ -691,7 +691,7 @@ function placita_is_bench_available( $id, $bench ) {
             WHERE benches = '$bench'
             AND baptism_date = '$datetime'
             AND is_canceled = 0
-            And id != $id
+            AND id != $id
             LIMIT 1",
             $table_name
         ),
