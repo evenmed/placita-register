@@ -9,8 +9,9 @@ Author URI: http://www.emiliovenegas.me
 License: GPL2
 */
 
-global $placita_db_version;
+global $placita_db_version, $bench_numbers;
 $placita_db_version = '1.6.11';
+$bench_numbers = array('A1','B1','C1','D1','E1','A2','B2','C2','D2','E2','A3','B3','C3','D3','E3','A4','B4','C4','D4','E4','A5','B5','C5','D5','E5','A6','B6','C6','D6','E6','A7','B7','C7','D7','E7','A8','B8','C8','D8','E8','A9','B9','C9','D9','E9','A10','B10','C10','D10','E10','A11','B11','C11','D11','E11','A12','B12','C12','D12','E12','A13','B13','C13','D13','E13','A14','B14','C14','D14','E14','A15','B15','C15','D15','E15','A16','B16','C16','D16','E16','A17','B17','C17','D17','E17');
 
 // Create or update db
 function placita_install_db() {
@@ -495,10 +496,12 @@ function placita_update_registry() {
     switch($field) {
         case 'priest':
             $value = sanitize_text_field( trim($v) );
+            $update = array( $field => $value );
             break;
 
         case 'amount_collected':
             $value = number_format((float)$v, 2, '.', '');
+            $update = array( $field => $value );
             break;
 
         case 'baptism_date':
@@ -510,6 +513,10 @@ function placita_update_registry() {
                     'message' => __("Please enter the date in a valid format", 'laplacita')
                  ) );
             }
+            $update = array(
+                $field => $value,
+                'benches' => 'NULL'
+            );
             break;
 
         case 'birthdate':
@@ -521,16 +528,23 @@ function placita_update_registry() {
                     'message' => __("Please enter the date in a valid format", 'laplacita')
                  ) );
             }
+            $update = array( $field => $value );
             break;
 
         case 'benches':
+            global $bench_numbers;
             if (
                 in_array( 
                     $v, 
-                    array('A1','B1','C1','D1','E1','A2','B2','C2','D2','E2','A3','B3','C3','D3','E3','A4','B4','C4','D4','E4','A5','B5','C5','D5','E5','A6','B6','C6','D6','E6','A7','B7','C7','D7','E7','A8','B8','C8','D8','E8','A9','B9','C9','D9','E9','A10','B10','C10','D10','E10','A11','B11','C11','D11','E11','A12','B12','C12','D12','E12','A13','B13','C13','D13','E13','A14','B14','C14','D14','E14','A15','B15','C15','D15','E15','A16','B16','C16','D16','E16','A17','B17','C17','D17','E17')
+                    $bench_numbers
                 )
             ) {
-                // placita_is_bench_available($registry, $v);
+                if ( ! placita_is_bench_available($registry, $v) ) {
+                    wp_send_json( array(
+                        'success' => 0,
+                        'message' => __("That bench is not available at that time", 'laplacita')
+                     ) );
+                }
                 $value = $v;
             } else {
                 wp_send_json( array(
@@ -538,11 +552,14 @@ function placita_update_registry() {
                     'message' => __("Please choose a valid bench number", 'laplacita')
                  ) );
             }
+            $update = array( $field => $value );
             break;
+
         case 'is_canceled':
         case 'is_noshow':
         case 'is_private':
             $value = intval($v) === 1 ? 1 : 0;
+            $update = array( $field => $value );
             break;
     }
 
@@ -550,9 +567,7 @@ function placita_update_registry() {
     $table_name = $wpdb->prefix . 'baptism_registers';
     if ($wpdb->update(
         $table_name, 
-        array( 
-            $field => $value,
-        ), 
+        $update, 
         array( 'ID' => $registry ), 
         array( '%s' ), 
         array( '%d' ) 
@@ -603,39 +618,55 @@ function placita_update_registry() {
 }
 
 /**
- * Check if the bench is available for the registry
+ * Check if the bench is available for the registry based on baptism date
+ * 
+ * If the registry doesn't have a baptism date set, it'll always return true
  * 
  * @param int    $id    the ID of the baptism registry
  * @param string $bench the bench number to check availability for
  * @return bool  true if the bench is abailable, false if it isn't
  */
-// function placita_is_bench_available( $id, $bench ) {
-//     global $wpdb;
-//     $table_name = $wpdb->prefix . 'baptism_registers';
+function placita_is_bench_available( $id, $bench ) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'baptism_registers';
 
-//     // Get the baptism date of the registry
-//     $results = $wpdb->get_results(
-//         sprintf(
-//             "SELECT baptism_date
-//             FROM %s
-//             WHERE id = $id
-//             LIMIT 1",
-//             $table_name
-//         ),
-//         ARRAY_A
-//     );
+    // Get the baptism date of the registry
+    $results = $wpdb->get_results(
+        sprintf(
+            "SELECT baptism_date
+            FROM %s
+            WHERE id = $id
+            LIMIT 1",
+            $table_name
+        ),
+        ARRAY_A
+    );
 
-//     if ( 
-//         count($results) < 1 ||
-//         ! isset( $results[0]['baptism_date'] ) ||
-//         ! $results[0]['baptism_date']
-//     )
-//         return false;
+    if ( 
+        count($results) < 1 ||
+        ! isset( $results[0]['baptism_date'] ) ||
+        ! $results[0]['baptism_date']
+    )
+        return true; // Registry doens't exist or doesn't have a date set
 
-//     error_log($results[0]['baptism_date']);
-//     return true;
+    $datetime = $results[0]['baptism_date'];
+    $bench_results = $wpdb->get_results(
+        sprintf(
+            "SELECT id
+            FROM %s
+            WHERE benches = '$bench'
+            AND baptism_date = '$datetime'
+            LIMIT 1",
+            $table_name
+        ),
+        ARRAY_A
+    );
 
-// }
+    if ( count($bench_results) > 0 )
+        return false; // That bench is already assigned to a baptism at the same time
+
+    return true;
+}
 
 // Generate and show the PDF for a specific registry
 function placita_baptism_register_view_pdf() {

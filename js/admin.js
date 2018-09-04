@@ -95,9 +95,13 @@
                 editRegistryLink.removeClass('show-input');
 
                 if ( r.success == 1 ) {
-                    $this
-                        .after('<span style="color:green;">'+ r.message +'</span>');
+                    $this.after('<span style="color:green;">'+ r.message +'</span>');
                     fieldValLabel.text(r.value);
+
+                    if ( field === 'baptism_date' ) {
+                        $('.input_benches[data-registry='+ registry +']').val('')
+                            .prevAll('.value-label').text('').end();
+                    }
     
                     setTimeout( function() {
                         $this.next('span').fadeOut();
