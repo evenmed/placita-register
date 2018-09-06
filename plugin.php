@@ -219,7 +219,7 @@ function placita_admin_scripts() {
         'placita_admin_scripts', 
         plugin_dir_url( __FILE__ ) . 'js/admin.js',
         array('datetimepicker'),
-        '2.1'
+        '2.2'
     );
 
 }
