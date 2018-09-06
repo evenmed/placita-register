@@ -735,7 +735,7 @@ function placita_baptism_register_view_pdf() {
 
     // If everything's good, show the pdf
     $registry = $results[0];
-    wp_redirect( plugin_dir_url(__FILE__) . 'pdfs/' . $registry['file'] );
+    wp_redirect( plugin_dir_url(__FILE__) . 'pdfs/' . rawurlencode($registry['file']) );
     exit;
 
 }
