@@ -840,23 +840,110 @@ function baptism_registers_page() {
   $testListTable->prepare_items();
 
   ?>
-  <div class="wrap">
+    <div class="wrap">
 
-      <h2>Baptism Pre-registers</h2>
-      <img width=200 src="<?php echo plugin_dir_url(__FILE__) . 'media/images/outline-logo-b.png' ?>" />
+        <h2>Baptism Pre-registers</h2>
+        <img width=200 src="<?php echo plugin_dir_url(__FILE__) . 'media/images/outline-logo-b.png' ?>" />
 
-      <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-      <form id="movies-filter" method="get">
-          <!-- For plugins, we also need to ensure that the form posts back to our current page -->
-          <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-          <!-- Search Form -->
-          <?php $testListTable->search_box('Search', 'search'); ?>
-          <!-- Now we can render the completed list table -->
-          <?php $testListTable->display() ?>
-      </form>
+        <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
+        <form id="movies-filter" method="get">
+            <!-- For plugins, we also need to ensure that the form posts back to our current page -->
+            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+            <!-- Search Form -->
+            <?php $testListTable->search_box('Search', 'search'); ?>
+            <!-- Now we can render the completed list table -->
+            <?php $testListTable->display() ?>
+        </form>
 
-  </div>
+        <form action="admin-post.php" target="_blank" id="registries_export" method="post">
+            <h3>Export registries</h3>
+            <input type="hidden" name="action" value="export_registries">
+            <?php wp_nonce_field('placita_export_registries'); ?>
+            <span>Date:</span><input type="text" class="registries_export_date" name="export_date">
+            <button type="submit"class="button-primary">Export</button>
+        </form>
+
+    </div>
   <?php
+}
+
+// Export all registries for a given datetime as a PDF
+add_action( 'admin_post_export_registries', 'placita_export_registries' );
+function placita_export_registries() {
+    // Verify nonce / admin referer
+    check_admin_referer( 'placita_export_registries' );
+
+    // Verifiy we have a date
+    if ( !isset($_REQUEST['export_date']) ) wp_die('Please set a valid date');
+
+    $export_date = $_REQUEST['export_date'];
+    $date = date_create_from_format('Y/m/d H:i', $export_date);
+
+    require_once plugin_dir_path(__FILE__) . '/vendor/mpdf/vendor/autoload.php';
+
+    global $wpdb, $bench_numbers;
+
+    $table_name = $wpdb->prefix . 'baptism_registers';
+
+    $results = $wpdb->get_results(
+        sprintf(
+            "SELECT first_name, middle_name, last_name, benches
+            FROM %s
+            WHERE baptism_date = '$export_date'
+            AND is_canceled = 0",
+            $table_name
+        ),
+        ARRAY_A
+    );
+
+    $letters = array('E', 'D', 'C', 'B', 'A');
+
+    $html = '<h3 style="text-align:center;">';
+    $html .= $date->format("l, jS \of F Y");
+    $html .= '<br/>';
+    $html .= $date->format("\a\\t h:i A");
+    $html .= '</h3>';
+    $html .= '<table style="width: 100%; margin: 0 auto; font-size: 12px;" cellspacing=0>';
+
+    $html .= '<thead>';
+    $html .= '<tr>';
+    foreach( $letters as $l ) {
+        $html .= '<th style="border: 1px solid; height: 30px; font-size: 14px;" colspan="2">';
+        $html .= $l;
+        $html .= '</th>';
+    }
+    $html .= '</tr>';
+    $html .= '</thead>';
+    $html .= '<tbody>';
+    
+    for( $i=1; $i<18; $i++ ) {
+        $html .= '<tr>';
+        foreach( $letters as $l ) {
+            $html .= '<td style="border: 1px solid; width: 30px; height: 38px; text-align: center;">';
+            $html .= $i;
+            $html .= '</td>';
+            $html .= '<td style="border: 1px solid; width: 170px; height: 38px;">';
+            foreach( $results as $r ) {
+                if ( $r['benches'] == $l . $i ) {
+                    $html .= $r['first_name'] . ' ';
+                    $html .= $r['middle_name'] ? $r['middle_name'] . ' ' : '';
+                    $html .= $r['last_name'];
+                }
+            }
+            $html .= '</td>';
+        }
+        $html .= '</tr>';
+    }
+
+    $html .= '</tbody>';
+    $html .= '</table>';
+    $html .= '</div>';
+
+    $mpdf = new mPDF('', 'Letter-L', 0, 'dejavuSans', 6, 6, 6, 0);
+
+    $mpdf->WriteHTML($html);
+
+    $mpdf->Output( 'Baptism_registries_'. $export_date .'.pdf', 'I' );
 }
 
 function baptism_registers_pdfs_page() {

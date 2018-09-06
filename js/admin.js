@@ -6,6 +6,39 @@
         $(this).addClass("show-input");
     })
 
+    // Registries export datetimepicker
+    $(".registries_export_date").datetimepicker({
+        disabledWeekDays: [1, 2, 3, 4],
+        allowTimes:['7:30', '9:30', '11:30', '13:15', '13:30', '15:15'],
+        format: 'Y/m/d H:i',
+        scrollMonth: false,
+        scrollTime: false,
+        scrollInput: false,
+        onSelectDate: function(ct, $this) {
+            const day = ct.getDay();
+            const times = [];
+            switch (day){
+                case 0: // Sunday
+                    times.push('9:30', '11:30', '13:30')
+                    break;
+                case 5: // Friday
+                    times.push('13:30')
+                    break;
+                case 6: // Saturday
+                    times.push('7:30', '9:30', '11:30', '13:15', '15:15')
+                    break;
+            }
+
+            $this.datetimepicker(
+                'setOptions',
+                {allowTimes: times}
+            );
+        },
+        onSelectTime: function(ct, $this) {
+            $this.blur();
+        }
+    });
+
     // Baptism date datetimepicker
     $(".input_baptism_date").datetimepicker({
         disabledWeekDays: [1, 2, 3, 4],
