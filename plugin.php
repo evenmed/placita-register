@@ -856,11 +856,11 @@ function baptism_registers_page() {
         </form>
 
         <form action="admin-post.php" target="_blank" id="registries_export" method="post">
-            <h3>Export registries</h3>
+            <h3>Generate Sitting Chart</h3>
             <input type="hidden" name="action" value="export_registries">
             <?php wp_nonce_field('placita_export_registries'); ?>
             <span>Date:</span><input type="text" class="registries_export_date" name="export_date">
-            <button type="submit"class="button-primary">Export</button>
+            <button type="submit"class="button-primary">Generate</button>
         </form>
 
     </div>
