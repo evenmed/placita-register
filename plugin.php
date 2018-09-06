@@ -879,7 +879,7 @@ function placita_export_registries() {
     $export_date = $_REQUEST['export_date'];
     $date = date_create_from_format('Y/m/d H:i', $export_date);
 
-    require_once plugin_dir_path(__FILE__) . '/vendor/mpdf/vendor/autoload.php';
+    require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
 
     global $wpdb, $bench_numbers;
 
