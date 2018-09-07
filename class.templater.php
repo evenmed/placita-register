@@ -68,6 +68,7 @@ class PageTemplater {
 		// Add your templates to this array.
 		$this->templates = array(
 			'baptism-register.php' => 'Baptism Pre-Register Form',
+			'baptism-register-no-redirect.php' => 'Baptism Pre-Register Form (NO THANKYOU PAGE)',
 		);
 			
 	}

@@ -160,11 +160,11 @@ function placita_update_db_check() {
 }
 add_action( 'plugins_loaded', 'placita_update_db_check' );
 
-require "class.templater.php";
+require_once "class.templater.php";
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
 
 function placita_scripts() {
-    if ( is_page_template( 'baptism-register.php' ) ) {
+    if ( is_page_template( 'baptism-register.php' ) || is_page_template( 'baptism-register-no-redirect.php' )  ) {
         wp_enqueue_style( 'roboto-font', 'https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700' );
         wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . 'vendor/bootstrap/css/bootstrap.min.css' );
         wp_enqueue_style( 'chosen', plugin_dir_url( __FILE__ ) . 'vendor/chosen/chosen.css' );
@@ -225,10 +225,11 @@ function placita_admin_scripts() {
 }
 add_action( 'admin_enqueue_scripts', 'placita_admin_scripts', 10 );
 
-function register_page(){
+function register_page( $redirect = true ){
 
     $childid = $_GET['child-id'] ? $_GET['child-id'] : false;
     $child = get_child($childid);
+    $redirect;
 
     require_once("views/register.php");
 }
@@ -459,8 +460,20 @@ PDF;
         $values
     );
 
-    wp_redirect("http://laplacita.org/es/gracias-aplicacion-bautizos"); // Thank you page
-
+    if ( intval($_POST['thankyou-page']) === 1 ) {
+        wp_redirect("http://laplacita.org/es/gracias-aplicacion-bautizos"); // Thank you page
+    } else {
+        $pages = get_pages(array(
+            'meta_key' => '_wp_page_template',
+            'meta_value' => 'baptism-register-no-redirect.php'
+        ));
+        if (empty($pages)) {
+            wp_redirect("http://laplacita.org/es/gracias-aplicacion-bautizos");
+        } else {
+            $page = $pages[0];
+            wp_redirect($page->guid);
+        }
+    }
     exit;
 }
 add_action( 'admin_post_nopriv_baptism_register_form', 'placita_handle_baptism_register_form' );
