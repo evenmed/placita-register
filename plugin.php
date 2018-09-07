@@ -709,7 +709,7 @@ function placita_baptism_register_view_pdf() {
     // First validate the nonce and user
     if ( 
         ! isset($_REQUEST['baptism_registry']) ||
-        ! current_user_can('administrator') || 
+        ! current_user_can('manage_baptism') || 
         wp_verify_nonce( $_REQUEST['_wpnonce'], 'view_baptism_registry_pdf' ) !== 1
     ) {
         wp_die("Are you sure you want to do this?");
