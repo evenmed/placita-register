@@ -45,9 +45,7 @@ class Baptism_Registers_Table extends WP_List_Table {
             'birthdate'        => __('Birth Date', 'laplacita'),
             'amount_collected' => __('Payment Collected', 'laplacita'),
             'benches'          => __('Benches', 'laplacita'),
-            'is_canceled'      => __('Canceled', 'laplacita'),
-            'is_noshow'        => __('No Show', 'laplacita'),
-            'is_private'       => __('Private', 'laplacita'),
+            'flags'            => __('Flags', 'laplacita'),
         );
     }
 
@@ -262,26 +260,31 @@ class Baptism_Registers_Table extends WP_List_Table {
                     $benches_string
                 </select>";
 
-            case 'is_canceled':
-            case 'is_noshow':
-            case 'is_private':
-                $value = $item[ $column_name ];
-                $label = $value ? 'Yes' : 'No';
-                $yes   = $value ? 'selected' : '';
-                $no    = $value ? '' : 'selected';
-                return '<span class="value-label">' . $label . '</span>' .
-                ' <a href="#" class="edit-registry-field">' . 
-                    __('Edit', 'laplacita') .
-                    '<span class="dashicons dashicons-edit"></span>' .
-                '</a>' .
-                "<select
-                    name='$column_name'
-                    class='input_$column_name registry-update'
+            case 'flags':
+                $is_canceled = $item['is_canceled'] ? 'checked' : '';
+                $is_noshow = $item['is_noshow'] ? 'checked' : '';
+                $is_private = $item['is_private'] ? 'checked' : '';
+                return "<label><input
+                    type='checkbox'
+                    class='input_is_canceled registry-update'
+                    name='is_canceled'
+                    $is_canceled
                     data-registry='$id'
-                >
-                    <option $yes value='1'>Yes</option>
-                    <option $no value='0'>No</option>
-                </select>";
+                />Canceled</label><br/>" .
+                "<label><input
+                    type='checkbox'
+                    class='input_is_noshow registry-update'
+                    name='is_noshow'
+                    $is_noshow
+                    data-registry='$id'
+                />No Show</label><br/>" .
+                "<label><input
+                    type='checkbox'
+                    class='input_is_private registry-update'
+                    name='is_private'
+                    $is_private
+                    data-registry='$id'
+                />Private</label><br/>";
 
             default:
                 return '';

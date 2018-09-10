@@ -106,7 +106,7 @@
 
         const registry = $this.attr('data-registry');
         const field = $this.attr('name');
-        const value = $this.val();
+        const value = $this.attr('type') !== 'checkbox' ? $this.val() : ($this.is(':checked') ? '1' : '0');
         $.post(
             ajaxurl,
             {
@@ -152,8 +152,10 @@
                             .each( function() {
                                 const _registry = $(this).attr('data-registry');
 
+                                // Re-enable previous bench
                                 $('.input_benches[data-registry='+ _registry +'] option[value='+ r.previous_bench +']').prop('disabled', false);
 
+                                // Disable newly selected bench
                                 $('.input_benches[data-registry='+ _registry +'] option[value='+ r.value +']').prop('disabled', true);
                             } );
                         

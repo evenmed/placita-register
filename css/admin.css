@@ -2,7 +2,7 @@
     display: none;
 }
 
-.registry-update.loading {
+.registry-update:not([type="checkbox"]).loading {
     width: calc(100% - 30px);
 }
 
