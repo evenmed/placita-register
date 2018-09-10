@@ -858,6 +858,14 @@ function baptism_registers_page() {
         <h2>Baptism Pre-registers</h2>
         <img width=200 src="<?php echo plugin_dir_url(__FILE__) . 'media/images/outline-logo-b.png' ?>" />
 
+        <form action="admin-post.php" target="_blank" id="registries_export" method="post">
+            <h3>Generate Sitting Chart</h3>
+            <input type="hidden" name="action" value="export_registries">
+            <?php wp_nonce_field('placita_export_registries'); ?>
+            <span>Date:</span><input type="text" class="registries_export_date" name="export_date">
+            <button type="submit"class="button-primary">Generate</button>
+        </form>
+
         <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
         <form id="movies-filter" method="get">
             <!-- For plugins, we also need to ensure that the form posts back to our current page -->
@@ -866,14 +874,6 @@ function baptism_registers_page() {
             <?php $testListTable->search_box('Search', 'search'); ?>
             <!-- Now we can render the completed list table -->
             <?php $testListTable->display() ?>
-        </form>
-
-        <form action="admin-post.php" target="_blank" id="registries_export" method="post">
-            <h3>Generate Sitting Chart</h3>
-            <input type="hidden" name="action" value="export_registries">
-            <?php wp_nonce_field('placita_export_registries'); ?>
-            <span>Date:</span><input type="text" class="registries_export_date" name="export_date">
-            <button type="submit"class="button-primary">Generate</button>
         </form>
 
     </div>
@@ -889,7 +889,7 @@ function placita_export_registries() {
     // Verifiy we have a date
     if ( !isset($_REQUEST['export_date']) ) wp_die('Please set a valid date');
 
-    $export_date = $_REQUEST['export_date'];
+    $export_date = sanitize_text_field($_REQUEST['export_date']);
     $date = date_create_from_format('Y/m/d H:i', $export_date);
 
     require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
