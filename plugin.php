@@ -9,9 +9,12 @@ Author URI: http://www.emiliovenegas.me
 License: GPL2
 */
 
-global $placita_db_version, $bench_numbers;
+global $placita_db_version, $bench_numbers, $registry_fields;
 $placita_db_version = '1.6.11';
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17');
+
+// #TODO: make this into an object with properties etc for cleaner code.
+// $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'parents_married', 'parents_married_church', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'father_catholic', 'father_id', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_catholic', 'mother_id', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godfather_catholic', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'godmother_catholic', 'note', 'bautismal_code');
 
 // Create or update db
 function placita_install_db() {
@@ -142,7 +145,6 @@ function placita_baptism_manager_login_redirect( $redirect_to, $request, $user )
     if ( is_array( $user->roles ) ) {
         // substitute your role(s):
         if ( in_array( 'baptism_registry_manager', $user->roles ) ) {
-            // pick where to redirect to, in the example: Posts page
             return admin_url( 'admin.php?page=baptism_registers' );
         } else {
             return admin_url();
@@ -160,7 +162,7 @@ function placita_update_db_check() {
 }
 add_action( 'plugins_loaded', 'placita_update_db_check' );
 
-require_once "class.templater.php";
+require_once "classes/class.templater.php";
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
 
 function placita_scripts() {
@@ -227,8 +229,6 @@ add_action( 'admin_enqueue_scripts', 'placita_admin_scripts', 10 );
 
 function register_page( $redirect = true ){
 
-    $childid = $_GET['child-id'] ? $_GET['child-id'] : false;
-    $child = get_child($childid);
     $redirect;
 
     require_once("views/register.php");
@@ -468,10 +468,10 @@ PDF;
             'meta_value' => 'baptism-register-no-redirect.php'
         ));
         if (empty($pages)) {
-            wp_redirect("http://laplacita.org/es/gracias-aplicacion-bautizos");
+            wp_redirect("http://laplacita.org/es/gracias-aplicacion-bautizos"); // Thank you page
         } else {
             $page = $pages[0];
-            wp_redirect($page->guid);
+            wp_redirect($page->guid); // Restart form
         }
     }
     exit;
@@ -754,130 +754,57 @@ function placita_baptism_register_view_pdf() {
 }
 add_action( 'admin_post_baptism_register_view_pdf', 'placita_baptism_register_view_pdf' );
 
-function language_switcher() {
-
-    if ( !defined('LANGUAGE') ) return false;
-
-    if (LANGUAGE == 'es') {
-        $l_slug = "en";
-        $l_name = "English";
-    } else {
-        $l_slug = "es";
-        $l_name = "Español";
-    }
-
-    echo "<a title=$l_name class='language-switcher' href='?lang=$l_slug'><button class='btn '>$l_name</button></a>";
-}
-
 function validate_phone($phone) {
     $phone = preg_replace('/\D/', '', $phone); //strip non-numeric characters
     if ( strlen($phone) == 10 ) return true;
     else return false;
 }
 
-function parishes_select($name, $id, $classes = array(), $default = false, $placeholder = "Select the Parish") {
-    global $db;
-    $options = $db->select( "parishes", "*", ["ORDER"=>"name"] );
-
-    $classes_string = "";
-    foreach ($classes as $class) {
-        $classes_string .= $class;
-        $classes_string .= " ";
-    }
-
-    $output = "<select required name='$name' id='$id' class='$classes_string'>";
-    $output .= "<option selected='selected' disabled value=''>$placeholder</option>";
-    foreach ($options as $option) {
-        $selected = "";
-        if ($default == $option['id']) $selected = "selected";
-        $output .= "<option value='". $option['id'] ."' ". $selected .">". $option['name'] ."</option>";
-    }
-    $output .= "</select>";
-
-    echo $output;
-}
-
-function get_child($id = false) { // If id isn't provided, it'll return the most recently edited incomplete child of the current user
-    return false;
-
-    global $db, $current_user;
-    $child = array();
-
-    if ($id) {
-        $child = $db->select( "childs", "*", ["id" => $id, "LIMIT" => 1] );
-    } else {
-        $child = $db->select( "childs", "*", ["registrar" => $current_user["id"], "complete" => 0, "LIMIT" => 1, "ORDER" => ['lastedited' => "DESC"]] );
-    }
-
-    if (empty($child)) return false;
-    else return $child[0];
-
-}
-
-function is_registrar($child, $user) {
-    global $db;
-    $data = $db->select("childs", "id", ["id" => $child, "registrar" => $user, "LIMIT" => 1]);
-    if (empty($data)) return false;
-    else return true;
-}
-
-function user_has_incomplete_child($userid = false) { // Checks if the passed user (current user if empty) is halfway through finishng registring a child
-    global $db;
-
-    if ( !$userid ) {
-        global $current_user;
-        $userid = $current_user['id'];
-    }
-
-    if (!$userid) return false;
-
-    $data = $db->select("childs", "id", ["registrar" => $userid, "complete" => 0, "LIMIT" => 1]);
-    if ( !empty($data) && !$_SESSION['saved_for_later'] ) return true;
-    else return false;
-
-}
-
-
 add_action( 'admin_menu', 'my_admin_menu' );
 function my_admin_menu() {
-    add_menu_page( 'Baptism Registers', 'Baptism Registers', 'manage_baptism', 'baptism_registers', 'baptism_registers_page', 'dashicons-admin-page', 6  );
-    add_menu_page( 'Baptism Registers PDFs', 'Baptism Registers PDFs', 'manage_baptism', 'baptism_registers_pdfs', 'baptism_registers_pdfs_page', 'dashicons-admin-page', 7  );
+    add_menu_page(
+        'Baptism Registers',
+        'Baptism Registers',
+        'manage_baptism',
+        'baptism_registers',
+        'baptism_registers_page',
+        'dashicons-admin-page',
+        6
+    );
+
+    add_menu_page(
+        'Baptism Registers PDFs',
+        'Baptism Registers PDFs',
+        'manage_baptism',
+        'baptism_registers_pdfs',
+        'baptism_registers_pdfs_page',
+        'dashicons-admin-page',
+        7
+    );
 }
 
 function baptism_registers_page() {
-  require_once('baptism-registers-table.class.php');
-    
-  //Create an instance of our package class...
-  $testListTable = new Baptism_Registers_Table();
-  //Fetch, prepare, sort, and filter our data...
-  $testListTable->prepare_items();
 
-  ?>
-    <div class="wrap">
+    if ( isset($_GET['registry']) ) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'baptism_registers';
+        $id = intval($_GET['registry']);
 
-        <h2>Baptism Pre-registers</h2>
-        <img width=200 src="<?php echo plugin_dir_url(__FILE__) . 'media/images/outline-logo-b.png' ?>" />
+        $results = $wpdb->get_results(
+            sprintf(
+                "SELECT *
+                FROM %s
+                WHERE id = '$id'",
+                $table_name
+            ),
+            ARRAY_A
+        );
 
-        <form action="admin-post.php" target="_blank" id="registries_export" method="post">
-            <h3>Generate Sitting Chart</h3>
-            <input type="hidden" name="action" value="export_registries">
-            <?php wp_nonce_field('placita_export_registries'); ?>
-            <span>Date:</span><input type="text" class="registries_export_date" name="export_date">
-            <button type="submit"class="button-primary">Generate</button>
-        </form>
+        print_r($results);
+    }
 
-        <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-        <form id="movies-filter" method="get">
-            <!-- For plugins, we also need to ensure that the form posts back to our current page -->
-            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-            <!-- Search Form -->
-            <?php $testListTable->search_box('Search', 'search'); ?>
-            <!-- Now we can render the completed list table -->
-            <?php $testListTable->display() ?>
-        </form>
+    require_once('admin_pages/baptism-registers-page.php');
 
-    </div>
-  <?php
 }
 
 // Export all registries for a given datetime as a PDF
@@ -960,7 +887,7 @@ function placita_export_registries() {
 }
 
 function baptism_registers_pdfs_page() {
-  require_once('admin-baptism-registers.php');
+  require_once('classes/class.baptism-registers-pdfs-table.php');
     
   //Create an instance of our package class...
   $testListTable = new Placita_List_Table();

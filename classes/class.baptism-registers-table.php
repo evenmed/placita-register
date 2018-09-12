@@ -110,7 +110,7 @@ class Baptism_Registers_Table extends WP_List_Table {
         //Build row actions
         $actions = array(
             'view' => sprintf(
-                '<a href="%s" target="_blank">View</a>',
+                '<a href="%s" title="View registry PDF" target="_blank">View</a>',
                 wp_nonce_url(
                     add_query_arg(
                         array(
@@ -120,6 +120,16 @@ class Baptism_Registers_Table extends WP_List_Table {
                         admin_url('admin-post.php')
                     ),
                     'view_baptism_registry_pdf'
+                )
+            ),
+            'edit' => sprintf(
+                '<a href="%s" title="Edit Registry">Edit</a>',
+                add_query_arg(
+                    array(
+                        'page' => 'baptism_registers',
+                        'registry' => $item['id'],
+                    ),
+                    admin_url( 'admin.php' )
                 )
             ),
         );
