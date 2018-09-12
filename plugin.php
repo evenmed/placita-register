@@ -10,7 +10,7 @@ License: GPL2
 */
 
 global $placita_db_version, $bench_numbers;
-$placita_db_version = '1.6.11';
+$placita_db_version = '1.7';
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17');
 
 // Create or update db
@@ -34,8 +34,6 @@ function placita_install_db() {
             gender enum('male', 'female') DEFAULT 'male' NOT NULL,
             birthdate date NOT NULL,
             birthplace varchar(255) NOT NULL,
-            parents_married tinyint(1) DEFAULT '0' NOT NULL,
-            parents_married_church tinyint(1) DEFAULT '0' NOT NULL,
             contact_email varchar(255) NOT NULL,
             address varchar(255) NOT NULL,
             city varchar(255) NOT NULL,
@@ -254,10 +252,6 @@ function placita_handle_baptism_register_form() {
     $values['birthplace'] = isset($_POST['birthplace']) ? 
         sanitize_text_field( $_POST['birthplace'] ) : "";
 
-    $values['parents_married'] = isset($_POST['parents-married']) ? 
-        1 : 0;
-    $values['parents_married_church'] = isset($_POST['parents-married-church']) ? 
-        1 : 0;
     $values['contact_email'] = isset($_POST['contact-email']) ? 
         sanitize_email( $_POST['contact-email'] ) : "";
     $values['address'] = isset($_POST['address']) ? 
@@ -356,8 +350,6 @@ function placita_handle_baptism_register_form() {
     <h2 style="margin-bottom:0;">Parent's Info</h2>
     <hr />
     <section style="width:50%; float:left;">
-    <div><strong>Married:</strong> {$checkbox($values['parents_married'])}</div>
-    <div><strong>Married in Church:</strong> {$checkbox($values['parents_married_church'])}</div>
     <div><strong>Street Address:</strong> {$values['address']}</div>
     <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
     </section>

@@ -75,16 +75,7 @@
                       <h3 class="fs-subtitle">Enter the parents' info</h3>
 
                       <div class="row">
-                        <div class="form-group col-sm-6">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" <?php echo $child['parents_married'] == 1 ? "checked" : "" ?> name="parents-married" id="parents-married" value="1"> Married
-                            </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" <?php echo $child['parents_married_church'] == 1 ? "checked" : "" ?> name="parents-married-church" id="parents-married-church" value="1"> Married in Church
-                            </label>
-                        </div>
-
-                        <div class="form-group col-sm-6">
+                        <div class="form-group col-sm-12">
                           <input required type="email" value="<?php echo $child['contact_email'] ? $child['contact_email'] : "" ?>" class="form-control" name="contact-email" placeholder="Contact Email" />
                         </div>
                       </div>
