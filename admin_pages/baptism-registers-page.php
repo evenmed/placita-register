@@ -9,7 +9,7 @@ $testListTable->prepare_items();
     <div class="wrap">
 
         <h2>Baptism Pre-registers</h2>
-        <img width=200 src="<?php echo plugin_dir_url(__FILE__) . 'media/images/outline-logo-b.png' ?>" />
+        <img width=200 src="<?php echo plugin_dir_url(__FILE__) . '../media/images/outline-logo-b.png' ?>" />
 
         <form action="admin-post.php" target="_blank" id="registries_export" method="post">
             <h3>Generate Sitting Chart</h3>

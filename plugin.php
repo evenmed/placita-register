@@ -199,16 +199,6 @@ function placita_admin_scripts() {
         plugin_dir_url( __FILE__ ) . 'vendor/datetimepicker/jquery.datetimepicker.full.min.js',
         array('jquery')
     );
-    wp_localize_script(
-        'datetimepicker',
-        'server_data',
-        [
-            'update_registry_nonce' => 
-            wp_create_nonce('placita_update_registry_nonce'),
-            'loading_spinner_url' =>
-            plugin_dir_url( __FILE__ ) . 'media/images/loading_spinner.gif'
-        ]
-    );
 
     // Datetimepicker styles
     wp_enqueue_style( 'datetimepicker', plugin_dir_url( __FILE__ ) . 'vendor/datetimepicker/jquery.datetimepicker.min.css' );
@@ -222,6 +212,16 @@ function placita_admin_scripts() {
         plugin_dir_url( __FILE__ ) . 'js/admin.js',
         array('datetimepicker'),
         '2.2'
+    );
+    wp_localize_script(
+        'placita_admin_scripts',
+        'server_data',
+        [
+            'update_registry_nonce' => 
+            wp_create_nonce('placita_update_registry_nonce'),
+            'loading_spinner_url' =>
+            plugin_dir_url( __FILE__ ) . 'media/images/loading_spinner.gif'
+        ]
     );
 
 }
