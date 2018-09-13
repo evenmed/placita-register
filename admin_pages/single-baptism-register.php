@@ -16,7 +16,7 @@ $child = $results[0];
 // print_r($child);
 ?>
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php _e('Edit Baptism Registry' . $screen->id, ET_DOMAIN); ?></h1>
+    <h1 class="wp-heading-inline"><?php _e('Edit Baptism Registry' . $screen->id, 'laplacita'); ?></h1>
     <hr class="wp-header-end">
     <div id="lost-connection-notice" class="error hidden">
         <p><span class="spinner"></span> <strong>Connection lost.</strong> Saving has been disabled until you’re reconnected.	<span class="hide-if-no-sessionstorage">We’re backing up this post in your browser, just in case.</span>
