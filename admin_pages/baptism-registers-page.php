@@ -11,6 +11,26 @@ $testListTable->prepare_items();
         <h2>Baptism Pre-registers</h2>
         <img width=200 src="<?php echo plugin_dir_url(__FILE__) . '../media/images/outline-logo-b.png' ?>" />
 
+        <?php
+        if ( isset($_GET['deleted']) ) {
+            $deleted = intval($_GET['deleted']);
+
+            if ( $deleted > 0 ) {
+                ?>
+                <div class="alert alert-success" role="alert">
+                    Registry was successfully deleted.
+                </div>
+                <?php
+            } else {
+                ?>
+                <div class="alert alert-warning" role="alert">
+                    An error ocurred while deleting the registry. Please try again.
+                </div>
+                <?php
+            }
+        }
+        ?>
+
         <form action="admin-post.php" target="_blank" id="registries_export" method="post">
             <h3>Generate Sitting Chart</h3>
             <input type="hidden" name="action" value="export_registries">

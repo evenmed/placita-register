@@ -26,15 +26,15 @@
 
                     <div class="row">
                       <div class="form-group col-sm-6">
-                        <input required type="text" class="form-control" value="<?php echo $child['first_name'] ? $child['first_name'] : "" ?>" name="first-name" placeholder="First Name" />
+                        <input required type="text" class="form-control" value="<?php echo $child['first_name'] ? $child['first_name'] : "" ?>" name="first_name" placeholder="First Name" />
                       </div>
                       <div class="form-group col-sm-6">
-                        <input type="text" class="form-control" value="<?php echo $child['middle_name'] ? $child['middle_name'] : "" ?>" name="middle-name" placeholder="Middle Name" />
+                        <input type="text" class="form-control" value="<?php echo $child['middle_name'] ? $child['middle_name'] : "" ?>" name="middle_name" placeholder="Middle Name" />
                       </div>
                     </div>
                     <div class="row">
                       <div class="form-group col-sm-6">
-                        <input required type="text" class="form-control" value="<?php echo $child['last_name'] ? $child['last_name'] : "" ?>" name="last-name" placeholder="Last Name" />
+                        <input required type="text" class="form-control" value="<?php echo $child['last_name'] ? $child['last_name'] : "" ?>" name="last_name" placeholder="Last Name" />
                       </div>
                       <div class="form-group col-sm-6">
                         <input required type="text" value="<?php echo $child['birthdate'] ? date("m/d/Y", strtotime($child['birthdate'])) : "" ?>" class="form-control date birthdate" name="birthdate" placeholder="Birthdate" />
@@ -77,15 +77,15 @@
                       <div class="row">
                         <div class="form-group col-sm-6">
                             <label class="checkbox-inline">
-                                <input type="checkbox" <?php echo $child['parents_married'] == 1 ? "checked" : "" ?> name="parents-married" id="parents-married" value="1"> Married
+                                <input type="checkbox" <?php echo $child['parents_married'] == 1 ? "checked" : "" ?> name="parents_married" id="parents-married" value="1"> Married
                             </label>
                             <label class="checkbox-inline">
-                                <input type="checkbox" <?php echo $child['parents_married_church'] == 1 ? "checked" : "" ?> name="parents-married-church" id="parents-married-church" value="1"> Married in Church
+                                <input type="checkbox" <?php echo $child['parents_married_church'] == 1 ? "checked" : "" ?> name="parents_married_church" id="parents-married-church" value="1"> Married in Church
                             </label>
                         </div>
 
                         <div class="form-group col-sm-6">
-                          <input required type="email" value="<?php echo $child['contact_email'] ? $child['contact_email'] : "" ?>" class="form-control" name="contact-email" placeholder="Contact Email" />
+                          <input required type="email" value="<?php echo $child['contact_email'] ? $child['contact_email'] : "" ?>" class="form-control" name="contact_email" placeholder="Contact Email" />
                         </div>
                       </div>
 
@@ -106,7 +106,6 @@
                           <input required type="text" value="<?php echo $child['zip'] ? $child['zip'] : "" ?>" class="form-control" name="zip" placeholder="Zip Code" />
                         </div>
                       </div>
-                      <?php /* parishes_select("parents-parish", "parents-parish", array("chosen-select"), $child['parents_parish'], "Parent Custody Parish"); */ ?>
                     </section>
 
 
@@ -117,32 +116,32 @@
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['father_name'] ? $child['father_name'] : "" ?>" class="form-control" name="father-first-name" placeholder="Father's First Name" />
+                          <input required type="text" value="<?php echo $child['father_name'] ? $child['father_name'] : "" ?>" class="form-control" name="father_name" placeholder="Father's First Name" />
                         </div>
                         <div class="form-group col-sm-6">
-                          <input type="text" value="<?php echo $child['father_middle'] ? $child['father_middle'] : "" ?>" class="form-control" name="father-middle-name" placeholder="Father's Middle Name" />
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['father_last'] ? $child['father_last'] : "" ?>" class="form-control" name="father-last-name" placeholder="Father's Last Name" />
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <input type="email" value="<?php echo $child['father_email'] ? $child['father_email'] : "" ?>" class="form-control" name="father-email" placeholder="Father's Email" />
+                          <input type="text" value="<?php echo $child['father_middle'] ? $child['father_middle'] : "" ?>" class="form-control" name="father_middle" placeholder="Father's Middle Name" />
                         </div>
                       </div>
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input required type="tel" value="<?php echo $child['father_phone'] ? $child['father_phone'] : ($current_user['phone'] ? $current_user['phone'] : ""); ?>" class="form-control" name="father-phone" placeholder="Father's Phone" />
+                          <input required type="text" value="<?php echo $child['father_last'] ? $child['father_last'] : "" ?>" class="form-control" name="father_last" placeholder="Father's Last Name" />
+                        </div>
+                        <div class="form-group col-sm-6">
+                          <input type="email" value="<?php echo $child['father_email'] ? $child['father_email'] : "" ?>" class="form-control" name="father_email" placeholder="Father's Email" />
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="form-group col-sm-6">
+                          <input required type="tel" value="<?php echo $child['father_phone'] ? $child['father_phone'] : ($current_user['phone'] ? $current_user['phone'] : ""); ?>" class="form-control" name="father_phone" placeholder="Father's Phone" />
                         </div>
                         <div class="form-group col-sm-6">
                           <label class="checkbox-inline">
-                              <input type="checkbox" <?php echo $child['father_catholic'] == 1 ? "checked" : "" ?> name="father-catholic" id="father-catholic" value="1"> Catholic
+                              <input type="checkbox" <?php echo $child['father_catholic'] == 1 ? "checked" : "" ?> name="father_catholic" id="father-catholic" value="1"> Catholic
                           </label>
                           <label class="checkbox-inline">
-                              <input type="checkbox" <?php echo $child['father_id'] == 1 ? "checked" : "" ?> name="father-id" id="father-id" value="1"> ID
+                              <input type="checkbox" <?php echo $child['father_id'] == 1 ? "checked" : "" ?> name="father_id" id="father-id" value="1"> ID
                           </label>
                         </div>
                       </div>
@@ -156,43 +155,43 @@
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['mother_name'] ? $child['mother_name'] : "" ?>" class="form-control" name="mother-first-name" placeholder="Mother's First Name" />
+                          <input required type="text" value="<?php echo $child['mother_name'] ? $child['mother_name'] : "" ?>" class="form-control" name="mother_name" placeholder="Mother's First Name" />
                         </div>
                         <div class="form-group col-sm-6">
-                          <input type="text" value="<?php echo $child['mother_middle'] ? $child['mother_middle'] : "" ?>" class="form-control" name="mother-middle-name" placeholder="Mother's Middle Name" />
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['mother_last'] ? $child['mother_last'] : "" ?>" class="form-control" name="mother-last-name" placeholder="Mother's Last Name" />
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <input type="email" value="<?php echo $child['mother_email'] ? $child['mother_email'] : "" ?>" class="form-control" name="mother-email" placeholder="Mother's Email" />
+                          <input type="text" value="<?php echo $child['mother_middle'] ? $child['mother_middle'] : "" ?>" class="form-control" name="mother_middle" placeholder="Mother's Middle Name" />
                         </div>
                       </div>
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input required type="tel" value="<?php echo $child['mother_phone'] ? $child['mother_phone'] : "" ?>" class="form-control" name="mother-phone" placeholder="Mother's Phone" />
+                          <input required type="text" value="<?php echo $child['mother_last'] ? $child['mother_last'] : "" ?>" class="form-control" name="mother_last" placeholder="Mother's Last Name" />
+                        </div>
+                        <div class="form-group col-sm-6">
+                          <input type="email" value="<?php echo $child['mother_email'] ? $child['mother_email'] : "" ?>" class="form-control" name="mother_email" placeholder="Mother's Email" />
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="form-group col-sm-6">
+                          <input required type="tel" value="<?php echo $child['mother_phone'] ? $child['mother_phone'] : "" ?>" class="form-control" name="mother_phone" placeholder="Mother's Phone" />
                         </div>
                         <div class="form-group col-sm-6">
                           <label class="checkbox-inline">
-                              <input type="checkbox" <?php echo $child['mother_catholic'] == 1 ? "checked" : "" ?> name="mother-catholic" id="mother-catholic" value="1"> Catholic
+                              <input type="checkbox" <?php echo $child['mother_catholic'] == 1 ? "checked" : "" ?> name="mother_catholic" id="mother-catholic" value="1"> Catholic
                           </label>
                           <label class="checkbox-inline">
-                              <input type="checkbox" <?php echo $child['mother_id'] == 1 ? "checked" : "" ?> name="mother-id" id="mother-id" value="1"> ID
+                              <input type="checkbox" <?php echo $child['mother_id'] == 1 ? "checked" : "" ?> name="mother_id" id="mother-id" value="1"> ID
                           </label>
                         </div>
                       </div>
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['mother_married_name'] ? $child['mother_married_name'] : "" ?>" class="form-control" name="mother-married-name" placeholder="Mother's Married Last Name" />
+                          <input required type="text" value="<?php echo $child['mother_married_name'] ? $child['mother_married_name'] : "" ?>" class="form-control" name="mother_married_name" placeholder="Mother's Married Last Name" />
                         </div>
                         <div class="form-group col-sm-6">
                           <label class="checkbox-inline">
-                              <input type="checkbox" <?php echo $child['mmn_birth_certificate'] == 1 ? "checked" : "" ?> name="mother-birth-certificate" id="mother-birth-certificate" value="1"> Birth Certificate
+                              <input type="checkbox" <?php echo $child['mmn_birth_certificate'] == 1 ? "checked" : "" ?> name="mmn_birth_certificate" id="mother-birth-certificate" value="1"> Birth Certificate
                           </label>
                         </div>
                       </div>
@@ -223,33 +222,32 @@
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['godfather_name'] ? $child['godfather_name'] : "" ?>" class="form-control" name="godfather-first-name" placeholder="Godather's First Name" />
+                          <input required type="text" value="<?php echo $child['godfather_name'] ? $child['godfather_name'] : "" ?>" class="form-control" name="godfather_name" placeholder="Godather's First Name" />
                         </div>
                         <div class="form-group col-sm-6">
-                          <input type="text" value="<?php echo $child['godfather_middle'] ? $child['godfather_middle'] : "" ?>" class="form-control" name="godfather-middle-name" placeholder="Godather's Middle Name" />
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['godfather_last'] ? $child['godfather_last'] : "" ?>" class="form-control" name="godfather-last-name" placeholder="Godather's Last Name" />
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <input type="email" value="<?php echo $child['godfather_email'] ? $child['godfather_email'] : "" ?>" class="form-control" name="godfather-email" placeholder="Godfather's Email" />
+                          <input type="text" value="<?php echo $child['godfather_middle'] ? $child['godfather_middle'] : "" ?>" class="form-control" name="godfather_middle" placeholder="Godather's Middle Name" />
                         </div>
                       </div>
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input type="tel" value="<?php echo $child['godfather_phone'] ? $child['godfather_phone'] : "" ?>" class="form-control" name="godfather-phone" placeholder="Godfather's Phone" />
+                          <input required type="text" value="<?php echo $child['godfather_last'] ? $child['godfather_last'] : "" ?>" class="form-control" name="godfather_last" placeholder="Godather's Last Name" />
+                        </div>
+                        <div class="form-group col-sm-6">
+                          <input type="email" value="<?php echo $child['godfather_email'] ? $child['godfather_email'] : "" ?>" class="form-control" name="godfather_email" placeholder="Godfather's Email" />
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="form-group col-sm-6">
+                          <input type="tel" value="<?php echo $child['godfather_phone'] ? $child['godfather_phone'] : "" ?>" class="form-control" name="godfather_phone" placeholder="Godfather's Phone" />
                         </div>
                         <div class="form-group col-sm-6">
                             <label class="checkbox-inline">
-                                <input type="checkbox" <?php echo $child['godfather_catholic'] == 1 ? "checked" : "" ?> name="godfather-catholic" id="godfather-catholic" value="1"> Catholic
+                                <input type="checkbox" <?php echo $child['godfather_catholic'] == 1 ? "checked" : "" ?> name="godfather_catholic" id="godfather-catholic" value="1"> Catholic
                             </label>
                         </div>
                       </div>
-                      <?php /* parishes_select("godfather-parish", "godfather-parish", array("chosen-select"), $child['godfather_parish'], "Godfather's Parish"); */ ?>
                     </section>
 
                     <section>
@@ -259,33 +257,32 @@
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['godmother_name'] ? $child['godmother_name'] : "" ?>" class="form-control" name="godmother-first-name" placeholder="Godmother's First Name" />
+                          <input required type="text" value="<?php echo $child['godmother_name'] ? $child['godmother_name'] : "" ?>" class="form-control" name="godmother_name" placeholder="Godmother's First Name" />
                         </div>
                         <div class="form-group col-sm-6">
-                          <input type="text" value="<?php echo $child['godmother_middle'] ? $child['godmother_middle'] : "" ?>" class="form-control" name="godmother-middle-name" placeholder="Godmother's Middle Name" />
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['godmother_last'] ? $child['godmother_last'] : "" ?>" class="form-control" name="godmother-last-name" placeholder="Godmother's Last Name" />
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <input type="email" value="<?php echo $child['godmother_email'] ? $child['godmother_email'] : "" ?>" class="form-control" name="godmother-email" placeholder="Godmother's Email" />
+                          <input type="text" value="<?php echo $child['godmother_middle'] ? $child['godmother_middle'] : "" ?>" class="form-control" name="godmother_middle" placeholder="Godmother's Middle Name" />
                         </div>
                       </div>
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input type="tel" value="<?php echo $child['godmother_phone'] ? $child['godmother_phone'] : "" ?>" class="form-control" name="godmother-phone" placeholder="Godmother's Phone" />
+                          <input required type="text" value="<?php echo $child['godmother_last'] ? $child['godmother_last'] : "" ?>" class="form-control" name="godmother_last" placeholder="Godmother's Last Name" />
+                        </div>
+                        <div class="form-group col-sm-6">
+                          <input type="email" value="<?php echo $child['godmother_email'] ? $child['godmother_email'] : "" ?>" class="form-control" name="godmother_email" placeholder="Godmother's Email" />
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="form-group col-sm-6">
+                          <input type="tel" value="<?php echo $child['godmother_phone'] ? $child['godmother_phone'] : "" ?>" class="form-control" name="godmother_phone" placeholder="Godmother's Phone" />
                         </div>
                         <div class="form-group col-sm-6">
                             <label class="checkbox-inline">
-                                <input type="checkbox" <?php echo $child['godmother_catholic'] == 1 ? "checked" : "" ?> name="godmother-catholic" id="godmother-catholic" value="1"> Catholic
+                                <input type="checkbox" <?php echo $child['godmother_catholic'] == 1 ? "checked" : "" ?> name="godmother_catholic" id="godmother-catholic" value="1"> Catholic
                             </label>
                         </div>
                       </div>
-                      <?php /* parishes_select("godmother-parish", "godmother-parish", array("chosen-select"), $child['godmother_parish'], "Godmother's Parish"); */ ?>
                     </section>
 
 
