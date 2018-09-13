@@ -395,6 +395,145 @@ add_action( 'admin_post_nopriv_baptism_register_form', 'placita_handle_baptism_r
 add_action( 'admin_post_baptism_register_form', 'placita_handle_baptism_register_form' );
 
 /**
+ * Generate pre-registry PDF with passed values
+ * 
+ * @param array $values Values to fill the PDF fields with
+ * @param bool  $inline When true, the PDF will be displayed inline instead of saved. Default: false
+ * @return array|bool If $inline is false, it'll return an array with the following structure:
+ * [
+ *     'file' => full path to the generated file,
+ *     'title' => title of the file
+ * ]
+ * If $inline is true, it'll always return true.
+ */
+function placita_generate_pdf($values, $inline = false) {
+
+    // Function to print checkboxes as 'Yes'/'No'
+    $checkbox = function ($cb) { return $cb ? 'Yes' : 'No'; };
+
+     // PDF structure
+     $html = <<<PDF
+     <h1>La Placita Baptism Pre-Register</h1>
+ 
+     <h2 style="margin-bottom:0;">Child's Info</h2>
+     <hr />
+     <section style="width:50%; float:left;">
+     <div><strong>First Name:</strong> {$values['first_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['middle_name']}</div>
+     <div><strong>Last Name:</strong> {$values['last_name']}</div>
+     </section>
+     <section style="width:50%; float:left;">
+     <div><strong>Sex:</strong> {$values['gender']}</div>
+     <div><strong>Birthdate:</strong> {$values['birthdate']}</div>
+     <div><strong>Birthplace:</strong> {$values['birthplace']}</div>
+     </section>
+ 
+ 
+     <h2 style="margin-bottom:0;">Parent's Info</h2>
+     <hr />
+     <section style="width:50%; float:left;">
+     <div><strong>Married:</strong> {$checkbox($values['parents_married'])}</div>
+     <div><strong>Married in Church:</strong> {$checkbox($values['parents_married_church'])}</div>
+     <div><strong>Street Address:</strong> {$values['address']}</div>
+     <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
+     </section>
+     <section style="width:50%; float:left;">
+     <div><strong>City:</strong> {$values['city']}</div>
+     <div><strong>State:</strong> {$values['state']}</div>
+     <div><strong>Zip Code:</strong> {$values['zip']}</div>
+     </section>
+ 
+     <section style="width:50%; float:left;">
+     <h3>Father</h3>
+     <div><strong>First Name:</strong> {$values['father_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['father_middle']}</div>
+     <div><strong>Last Name:</strong> {$values['father_last']}</div>
+     <div><strong>Email:</strong> {$values['father_email']}</div>
+     <div><strong>Phone:</strong> {$values['father_phone']}</div>
+     <div><strong>Catholic:</strong> {$checkbox($values['father_catholic'])}</div>
+     <div><strong>ID:</strong> {$checkbox($values['father_id'])}</div>
+     </section>
+ 
+     <section style="width:50%; float:left;">
+     <h3>Mother</h3>
+     <div><strong>First Name:</strong> {$values['mother_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['mother_middle']}</div>
+     <div><strong>Last Name:</strong> {$values['mother_last']}</div>
+     <div><strong>Email:</strong> {$values['mother_email']}</div>
+     <div><strong>Phone:</strong> {$values['mother_phone']}</div>
+     <div><strong>Catholic:</strong> {$checkbox($values['mother_catholic'])}</div>
+     <div><strong>ID:</strong> {$checkbox($values['mother_id'])}</div>
+     <div><strong>Married Last Name:</strong> {$values['mother_married_name']}</div>
+     <div><strong>Birth Certificate:</strong> {$checkbox($values['mmn_birth_certificate'])}</div>
+     </section>
+ 
+ 
+     <h2 style="margin-bottom:0;">Godparent's Info</h2>
+     <hr />
+ 
+     <section style="width:50%; float:left;">
+     <h3>Godfather</h3>
+     <div><strong>First Name:</strong> {$values['godfather_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['godfather_middle']}</div>
+     <div><strong>Last Name:</strong> {$values['godfather_last']}</div>
+     <div><strong>Email:</strong> {$values['godfather_email']}</div>
+     <div><strong>Phone:</strong> {$values['godfather_phone']}</div>
+     <div><strong>Catholic:</strong> {$checkbox($values['godfather_catholic'])}</div>
+     </section>
+ 
+     <section style="width:50%; float:left;">
+     <h3>Godmother</h3>
+     <div><strong>First Name:</strong> {$values['godmother_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['godmother_middle']}</div>
+     <div><strong>Last Name:</strong> {$values['godmother_last']}</div>
+     <div><strong>Email:</strong> {$values['godmother_email']}</div>
+     <div><strong>Phone:</strong> {$values['godmother_phone']}</div>
+     <div><strong>Catholic:</strong> {$checkbox($values['godmother_catholic'])}</div>
+     </section>
+ 
+     <br/>
+     <br/>
+ 
+     <h3>Notes</h3>
+     <div>{$values['note']}</div>
+ 
+PDF;
+   
+     $time = time();
+ 
+     // PDF title
+     $title = "Baptism_Preregister_{$values['first_name']}_{$values['last_name']}_{$time}.pdf";
+     
+     // Remove anything which isn't a word, whitespace, number
+     // or any of the following caracters -_~,;:[]().
+     // If you don't need to handle multi-byte characters
+     // Thanks @Łukasz Rysiak!
+     $file = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $title);
+     // Remove any runs of periods (thanks falstro!)
+     $file = preg_replace("([\.]{2,})", '', $title);
+     
+     $file = plugin_dir_path(__FILE__) . 'pdfs/' . $title;
+ 
+     // Require composer autoload
+     require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
+     $mpdf = new mPDF('', 'Letter');
+     $mpdf->SetTitle( $title );
+     $mpdf->WriteHTML($html);
+
+     if ( $inline ) {
+        $mpdf->Output( $title, 'I' );
+        return true;
+     } else {
+        $mpdf->Output( $file, 'F' );
+        return array(
+            'file' => $file,
+            'title' => $title
+        );
+     }
+
+}
+
+/**
  * Upate registry from admin screen
  */
 function placita_handle_edit_single_registry() {
@@ -834,7 +973,7 @@ function placita_baptism_register_view_pdf() {
     $registry = intval($_REQUEST['baptism_registry']);
     $table_name = $wpdb->prefix . 'baptism_registers';
     $sql = sprintf(
-        "SELECT file
+        "SELECT *
         FROM %s
         WHERE id = $registry
         LIMIT 1",
@@ -843,14 +982,17 @@ function placita_baptism_register_view_pdf() {
 
     $results = $wpdb->get_results( $sql , ARRAY_A );
 
-    if ( count($results) == 0 ) {
+    if ( count($results) === 0 ) {
         wp_die("The registry you're looking for doesn't exist");
     }
 
     // If everything's good, show the pdf
-    $registry = $results[0];
-    wp_redirect( plugin_dir_url(__FILE__) . 'pdfs/' . rawurlencode($registry['file']) );
-    exit;
+    $values = $results[0];
+
+    placita_generate_pdf($values, true);
+
+    // wp_redirect( plugin_dir_url(__FILE__) . 'pdfs/' . rawurlencode($registry['file']) );
+    // exit;
 
 }
 add_action( 'admin_post_baptism_register_view_pdf', 'placita_baptism_register_view_pdf' );
