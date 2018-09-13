@@ -153,7 +153,7 @@ class Placita_List_Table extends WP_List_Table {
         
         //Build row actions
         $actions = array(
-            'view'      => sprintf( '<a href="%s" target="_blank">View</a>', plugin_dir_url( __FILE__ ) . 'pdfs_old/' . $item['filename'] ),
+            'view'      => sprintf( '<a href="%s" target="_blank">View</a>', plugin_dir_url( __FILE__ ) . '../pdfs_old/' . $item['filename'] ),
         );
         
         //Return the title contents
