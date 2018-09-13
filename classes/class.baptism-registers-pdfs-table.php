@@ -310,7 +310,7 @@ class Placita_List_Table extends WP_List_Table {
          * be able to use your precisely-queried data immediately.
          */
         $data = array();
-        $pdfs = scandir(plugin_dir_path(__FILE__) . 'pdfs_old');
+        $pdfs = scandir(plugin_dir_path(__FILE__) . '../pdfs_old');
         $pdfs = array_diff($pdfs, array('.', '..'));
       
         $i = 1;
