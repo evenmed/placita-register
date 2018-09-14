@@ -13,6 +13,9 @@ global $placita_db_version, $bench_numbers;
 $placita_db_version = '1.7';
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17');
 
+// #TODO: make this into an object with properties etc for cleaner code.
+// $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'parents_married', 'parents_married_church', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'father_catholic', 'father_id', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_catholic', 'mother_id', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godfather_catholic', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'godmother_catholic', 'note', 'bautismal_code');
+
 // Create or update db
 function placita_install_db() {
     global $placita_db_version;
@@ -140,7 +143,6 @@ function placita_baptism_manager_login_redirect( $redirect_to, $request, $user )
     if ( is_array( $user->roles ) ) {
         // substitute your role(s):
         if ( in_array( 'baptism_registry_manager', $user->roles ) ) {
-            // pick where to redirect to, in the example: Posts page
             return admin_url( 'admin.php?page=baptism_registers' );
         } else {
             return admin_url();
@@ -158,7 +160,7 @@ function placita_update_db_check() {
 }
 add_action( 'plugins_loaded', 'placita_update_db_check' );
 
-require_once "class.templater.php";
+require_once "classes/class.templater.php";
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
 
 function placita_scripts() {
@@ -195,19 +197,18 @@ function placita_admin_scripts() {
         plugin_dir_url( __FILE__ ) . 'vendor/datetimepicker/jquery.datetimepicker.full.min.js',
         array('jquery')
     );
-    wp_localize_script(
-        'datetimepicker',
-        'server_data',
-        [
-            'update_registry_nonce' => 
-            wp_create_nonce('placita_update_registry_nonce'),
-            'loading_spinner_url' =>
-            plugin_dir_url( __FILE__ ) . 'media/images/loading_spinner.gif'
-        ]
-    );
 
     // Datetimepicker styles
     wp_enqueue_style( 'datetimepicker', plugin_dir_url( __FILE__ ) . 'vendor/datetimepicker/jquery.datetimepicker.min.css' );
+
+    // We use Bootstrap in the edit single registry page
+    $screen = get_current_screen();
+    if ( $screen->id == 'toplevel_page_baptism_registers' && isset($_GET['registry']) ) {
+        wp_enqueue_style(
+            'bootstrap',
+            plugin_dir_url( __FILE__ ) . 'vendor/bootstrap/4.0/bootstrap.min.css'
+        );
+    }
 
     // Our custom styles
     wp_enqueue_style( 'placita_admin_styles', plugin_dir_url( __FILE__ ) . 'css/admin.css' );
@@ -219,14 +220,22 @@ function placita_admin_scripts() {
         array('datetimepicker'),
         '2.2'
     );
+    wp_localize_script(
+        'placita_admin_scripts',
+        'server_data',
+        [
+            'update_registry_nonce' => 
+            wp_create_nonce('placita_update_registry_nonce'),
+            'loading_spinner_url' =>
+            plugin_dir_url( __FILE__ ) . 'media/images/loading_spinner.gif'
+        ]
+    );
 
 }
 add_action( 'admin_enqueue_scripts', 'placita_admin_scripts', 10 );
 
 function register_page( $redirect = true ){
 
-    $childid = $_GET['child-id'] ? $_GET['child-id'] : false;
-    $child = get_child($childid);
     $redirect;
 
     require_once("views/register.php");
@@ -236,98 +245,8 @@ function placita_handle_baptism_register_form() {
 
     $checkbox = function ($cb) { return $cb ? 'Yes' : 'No'; };
 
-    //Sanitize everything and but it into our $values array
-    $values = array();
-
-    $values['first_name'] = isset($_POST['first-name']) ? 
-        sanitize_text_field( $_POST['first-name'] ) : "";
-    $values['middle_name'] = isset($_POST['middle-name']) ? 
-        sanitize_text_field( $_POST['middle-name'] ) : "";
-    $values['last_name'] = isset($_POST['last-name']) ? 
-        sanitize_text_field( $_POST['last-name'] ) : "";
-    $values['gender'] = isset($_POST['gender']) ? 
-        sanitize_text_field( $_POST['gender'] ) : "";
-    $values['birthdate'] = ( isset($_POST['birthdate']) && $_POST['birthdate'] != "" ) ? 
-        date( "Y-m-d", strtotime( sanitize_text_field( $_POST['birthdate'] ) ) ) : null;
-    $values['birthplace'] = isset($_POST['birthplace']) ? 
-        sanitize_text_field( $_POST['birthplace'] ) : "";
-
-    $values['contact_email'] = isset($_POST['contact-email']) ? 
-        sanitize_email( $_POST['contact-email'] ) : "";
-    $values['address'] = isset($_POST['address']) ? 
-        sanitize_text_field( $_POST['address'] ) : "";
-    $values['city'] = isset($_POST['city']) ? 
-        sanitize_text_field( $_POST['city'] ) : "";
-    $values['state'] = isset($_POST['state']) ? 
-        sanitize_text_field( $_POST['state'] ) : "";
-    $values['zip'] = isset($_POST['zip']) ? 
-        sanitize_text_field( $_POST['zip'] ) : "";
-
-    $values['father_name'] = isset($_POST['father-first-name']) ? 
-        sanitize_text_field( $_POST['father-first-name'] ) : "";
-    $values['father_middle'] = isset($_POST['father-middle-name']) ? 
-        sanitize_text_field( $_POST['father-middle-name'] ) : "";
-    $values['father_last'] = isset($_POST['father-last-name']) ? 
-        sanitize_text_field( $_POST['father-last-name'] ) : "";
-    $values['father_email'] = isset($_POST['father-email']) ? 
-        sanitize_email( $_POST['father-email'] ) : "";
-    $values['father_phone'] = isset($_POST['father-phone']) ? 
-        sanitize_text_field( $_POST['father-phone'] ) : "";
-    $values['father_catholic'] = isset($_POST['father-catholic']) ? 
-        1 : 0;
-    $values['father_id'] = isset($_POST['father-id']) ? 
-        1 : 0;
-
-    $values['mother_name'] = isset($_POST['mother-first-name']) ? 
-        sanitize_text_field( $_POST['mother-first-name'] ) : "";
-    $values['mother_middle'] = isset($_POST['mother-middle-name']) ? 
-        sanitize_text_field( $_POST['mother-middle-name'] ) : "";
-    $values['mother_last'] = isset($_POST['mother-last-name']) ? 
-        sanitize_text_field( $_POST['mother-last-name'] ) : "";
-    $values['mother_email'] = isset($_POST['mother-email']) ? 
-        sanitize_email( $_POST['mother-email'] ) : "";
-    $values['mother_phone'] = isset($_POST['mother-phone']) ? 
-        sanitize_text_field( $_POST['mother-phone'] ) : "";
-    $values['mother_catholic'] = isset($_POST['mother-catholic']) ? 
-        1 : 0;
-    $values['mother_id'] = isset($_POST['mother-id']) ? 
-        1 : 0;
-    $values['mother_married_name'] = isset($_POST['mother-married-name']) ? 
-        sanitize_text_field( $_POST['mother-married-name'] ) : "";
-    $values['mmn_birth_certificate'] = isset($_POST['mother-birth-certificate']) ? 
-        1 : 0;
-
-    $values['godfather_name'] = isset($_POST['godfather-first-name']) ? 
-        sanitize_text_field( $_POST['godfather-first-name'] ) : "";
-    $values['godfather_middle'] = isset($_POST['godfather-middle-name']) ? 
-        sanitize_text_field( $_POST['godfather-middle-name'] ) : "";
-    $values['godfather_last'] = isset($_POST['godfather-last-name']) ? 
-        sanitize_text_field( $_POST['godfather-last-name'] ) : "";
-    $values['godfather_email'] = isset($_POST['godfather-email']) ? 
-        sanitize_email( $_POST['godfather-email'] ) : "";
-    $values['godfather_phone'] = isset($_POST['godfather-phone']) ? 
-        sanitize_text_field( $_POST['godfather-phone'] ) : "";
-    $values['godfather_catholic'] = isset($_POST['godfather-catholic']) ? 
-        1 : 0;
-
-    $values['godmother_name'] = isset($_POST['godmother-first-name']) ? 
-        sanitize_text_field( $_POST['godmother-first-name'] ) : "";
-    $values['godmother_middle'] = isset($_POST['godmother-middle-name']) ? 
-        sanitize_text_field( $_POST['godmother-middle-name'] ) : "";
-    $values['godmother_last'] = isset($_POST['godmother-last-name']) ? 
-        sanitize_text_field( $_POST['godmother-last-name'] ) : "";
-    $values['godmother_email'] = isset($_POST['godmother-email']) ? 
-        sanitize_email( $_POST['godmother-email'] ) : "";
-    $values['godmother_phone'] = isset($_POST['godmother-phone']) ? 
-        sanitize_text_field( $_POST['godmother-phone'] ) : "";
-    $values['godmother_catholic'] = isset($_POST['godmother-catholic']) ? 
-        1 : 0;
-
-    $values['note'] = isset($_POST['note']) ? 
-        sanitize_text_field( $_POST['note'] ) : "";
-    $values['bautismal_code'] = isset($_POST['bautismal-code']) ? 
-        sanitize_text_field( $_POST['bautismal-code'] ) : "";
-
+    //Sanitize everything and put it into our $values array
+    $values = sanitize_registry_data();
 
     // PDF structure
     $html = <<<PDF
@@ -460,16 +379,231 @@ PDF;
             'meta_value' => 'baptism-register-no-redirect.php'
         ));
         if (empty($pages)) {
-            wp_redirect("http://laplacita.org/es/gracias-aplicacion-bautizos");
+            wp_redirect("http://laplacita.org/es/gracias-aplicacion-bautizos"); // Thank you page
         } else {
             $page = $pages[0];
-            wp_redirect($page->guid);
+            wp_redirect($page->guid); // Restart form
         }
     }
     exit;
 }
 add_action( 'admin_post_nopriv_baptism_register_form', 'placita_handle_baptism_register_form' );
 add_action( 'admin_post_baptism_register_form', 'placita_handle_baptism_register_form' );
+
+/**
+ * Generate pre-registry PDF with passed values
+ * 
+ * @param array $values Values to fill the PDF fields with
+ * @param bool  $inline When true, the PDF will be displayed inline instead of saved. Default: false
+ * @return array|bool If $inline is false, it'll return an array with the following structure:
+ * [
+ *     'file' => full path to the generated file,
+ *     'title' => title of the file
+ * ]
+ * If $inline is true, it'll always return true.
+ */
+function placita_generate_pdf($values, $inline = false) {
+
+    // Function to print checkboxes as 'Yes'/'No'
+    $checkbox = function ($cb) { return $cb ? 'Yes' : 'No'; };
+
+     // PDF structure
+     $html = <<<PDF
+     <h1>La Placita Baptism Pre-Register</h1>
+ 
+     <h2 style="margin-bottom:0;">Child's Info</h2>
+     <hr />
+     <section style="width:50%; float:left;">
+     <div><strong>First Name:</strong> {$values['first_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['middle_name']}</div>
+     <div><strong>Last Name:</strong> {$values['last_name']}</div>
+     </section>
+     <section style="width:50%; float:left;">
+     <div><strong>Sex:</strong> {$values['gender']}</div>
+     <div><strong>Birthdate:</strong> {$values['birthdate']}</div>
+     <div><strong>Birthplace:</strong> {$values['birthplace']}</div>
+     </section>
+ 
+ 
+     <h2 style="margin-bottom:0;">Parent's Info</h2>
+     <hr />
+     <section style="width:50%; float:left;">
+     <div><strong>Married:</strong> {$checkbox($values['parents_married'])}</div>
+     <div><strong>Married in Church:</strong> {$checkbox($values['parents_married_church'])}</div>
+     <div><strong>Street Address:</strong> {$values['address']}</div>
+     <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
+     </section>
+     <section style="width:50%; float:left;">
+     <div><strong>City:</strong> {$values['city']}</div>
+     <div><strong>State:</strong> {$values['state']}</div>
+     <div><strong>Zip Code:</strong> {$values['zip']}</div>
+     </section>
+ 
+     <section style="width:50%; float:left;">
+     <h3>Father</h3>
+     <div><strong>First Name:</strong> {$values['father_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['father_middle']}</div>
+     <div><strong>Last Name:</strong> {$values['father_last']}</div>
+     <div><strong>Email:</strong> {$values['father_email']}</div>
+     <div><strong>Phone:</strong> {$values['father_phone']}</div>
+     <div><strong>Catholic:</strong> {$checkbox($values['father_catholic'])}</div>
+     <div><strong>ID:</strong> {$checkbox($values['father_id'])}</div>
+     </section>
+ 
+     <section style="width:50%; float:left;">
+     <h3>Mother</h3>
+     <div><strong>First Name:</strong> {$values['mother_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['mother_middle']}</div>
+     <div><strong>Last Name:</strong> {$values['mother_last']}</div>
+     <div><strong>Email:</strong> {$values['mother_email']}</div>
+     <div><strong>Phone:</strong> {$values['mother_phone']}</div>
+     <div><strong>Catholic:</strong> {$checkbox($values['mother_catholic'])}</div>
+     <div><strong>ID:</strong> {$checkbox($values['mother_id'])}</div>
+     <div><strong>Married Last Name:</strong> {$values['mother_married_name']}</div>
+     <div><strong>Birth Certificate:</strong> {$checkbox($values['mmn_birth_certificate'])}</div>
+     </section>
+ 
+ 
+     <h2 style="margin-bottom:0;">Godparent's Info</h2>
+     <hr />
+ 
+     <section style="width:50%; float:left;">
+     <h3>Godfather</h3>
+     <div><strong>First Name:</strong> {$values['godfather_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['godfather_middle']}</div>
+     <div><strong>Last Name:</strong> {$values['godfather_last']}</div>
+     <div><strong>Email:</strong> {$values['godfather_email']}</div>
+     <div><strong>Phone:</strong> {$values['godfather_phone']}</div>
+     <div><strong>Catholic:</strong> {$checkbox($values['godfather_catholic'])}</div>
+     </section>
+ 
+     <section style="width:50%; float:left;">
+     <h3>Godmother</h3>
+     <div><strong>First Name:</strong> {$values['godmother_name']}</div>
+     <div><strong>Middle Name:</strong> {$values['godmother_middle']}</div>
+     <div><strong>Last Name:</strong> {$values['godmother_last']}</div>
+     <div><strong>Email:</strong> {$values['godmother_email']}</div>
+     <div><strong>Phone:</strong> {$values['godmother_phone']}</div>
+     <div><strong>Catholic:</strong> {$checkbox($values['godmother_catholic'])}</div>
+     </section>
+ 
+     <br/>
+     <br/>
+ 
+     <h3>Notes</h3>
+     <div>{$values['note']}</div>
+ 
+PDF;
+   
+     $time = time();
+ 
+     // PDF title
+     $title = "Baptism_Preregister_{$values['first_name']}_{$values['last_name']}_{$time}.pdf";
+     
+     // Remove anything which isn't a word, whitespace, number
+     // or any of the following caracters -_~,;:[]().
+     // If you don't need to handle multi-byte characters
+     // Thanks @Łukasz Rysiak!
+     $file = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $title);
+     // Remove any runs of periods (thanks falstro!)
+     $file = preg_replace("([\.]{2,})", '', $title);
+     
+     $file = plugin_dir_path(__FILE__) . 'pdfs/' . $title;
+ 
+     // Require composer autoload
+     require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
+     $mpdf = new mPDF('', 'Letter');
+     $mpdf->SetTitle( $title );
+     $mpdf->WriteHTML($html);
+
+     if ( $inline ) {
+        $mpdf->Output( $title, 'I' );
+        return true;
+     } else {
+        $mpdf->Output( $file, 'F' );
+        return array(
+            'file' => $file,
+            'title' => $title
+        );
+     }
+
+}
+
+/**
+ * Upate registry from admin screen
+ */
+function placita_handle_edit_single_registry() {
+
+    if (
+        wp_verify_nonce($_POST['_wpnonce'], 'placita_edit_single_registry') !== 1 ||
+        ! current_user_can('manage_baptism') 
+    )
+        wp_die('Are you sure you want to do this?');
+
+    //Sanitize everything and put it into our $values array
+    $values = sanitize_registry_data();
+
+    // Registry ID
+    $registry = intval($_POST['registry']);
+
+    // Save evrything to the db
+    global $wpdb;
+
+    $updated = $wpdb->update( 
+        $wpdb->prefix . 'baptism_registers', 
+        $values, 
+        array( 'ID' => $registry )
+    );
+
+    wp_redirect(
+        add_query_arg(
+            array(
+                'page'     => 'baptism_registers',
+                'registry' => $registry,
+                'updated'  => $updated ? '1' : '0'
+            ),
+            admin_url( 'admin.php' )
+        )
+    ); 
+    exit;
+}
+add_action( 'admin_post_edit_single_registry', 'placita_handle_edit_single_registry' );
+
+/**
+ * Delte registry
+ */
+function placita_handle_delete_single_registry() {
+
+    if (
+        wp_verify_nonce($_POST['_wpnonce'], 'placita_delete_single_registry') !== 1 ||
+        ! current_user_can('manage_baptism') 
+    )
+        wp_die('Are you sure you want to do this?');
+
+    // Registry ID
+    $registry = intval($_POST['registry']);
+
+    // Delete from the db
+    global $wpdb;
+
+    $deleted = $wpdb->delete( 
+        $wpdb->prefix . 'baptism_registers',
+        array( 'ID' => $registry ),
+        array( '%d' )
+    );
+
+    wp_redirect(
+        add_query_arg(
+            array(
+                'page'     => 'baptism_registers',
+                'deleted'  => $deleted ? '1' : '0'
+            ),
+            admin_url( 'admin.php' )
+        )
+    ); 
+    exit;
+}
+add_action( 'admin_post_delete_single_registry', 'placita_handle_delete_single_registry' );
 
 // AJAX action to update registry fields
 add_action( 'wp_ajax_update_registry', 'placita_update_registry' );
@@ -503,11 +637,13 @@ function placita_update_registry() {
         case 'priest':
             $value = sanitize_text_field( trim($v) );
             $update = array( $field => $value );
+            $format = array( '%s' );
             break;
 
         case 'amount_collected':
             $value = number_format((float)$v, 2, '.', '');
             $update = array( $field => $value );
+            $format = array( '%f' );
             break;
 
         case 'baptism_date':
@@ -523,6 +659,7 @@ function placita_update_registry() {
                 $field => $value,
                 'benches' => 'NULL'
             );
+            $format = array( '%s', '%s' );
             break;
 
         case 'birthdate':
@@ -535,6 +672,7 @@ function placita_update_registry() {
                  ) );
             }
             $update = array( $field => $value );
+            $format = array( '%s' );
             break;
 
         case 'benches':
@@ -561,6 +699,7 @@ function placita_update_registry() {
                  ) );
             }
             $update = array( $field => $value );
+            $format = array( '%s' );
             break;
 
         case 'is_canceled':
@@ -568,6 +707,7 @@ function placita_update_registry() {
         case 'is_private':
             $value = intval($v) === 1 ? 1 : 0;
             $update = array( $field => $value );
+            $format = array( '%d' );
             break;
     }
 
@@ -577,7 +717,7 @@ function placita_update_registry() {
         $table_name, 
         $update, 
         array( 'ID' => $registry ), 
-        array( '%s' ), 
+        $format, 
         array( '%d' ) 
     )) {
         // Get the value from the db to display it exactly as it was saved
@@ -656,6 +796,110 @@ function placita_update_registry() {
 }
 
 /**
+ * Sanitize registry values from $_POST and return an array of the sanitized values
+ * 
+ * @return array[string/int] 
+ */
+function sanitize_registry_data() {
+    $values = array();
+
+    $values['first_name'] = isset($_POST['first_name']) ? 
+        sanitize_text_field( $_POST['first_name'] ) : "";
+    $values['middle_name'] = isset($_POST['middle_name']) ? 
+        sanitize_text_field( $_POST['middle_name'] ) : "";
+    $values['last_name'] = isset($_POST['last_name']) ? 
+        sanitize_text_field( $_POST['last_name'] ) : "";
+    $values['gender'] = isset($_POST['gender']) ? 
+        sanitize_text_field( $_POST['gender'] ) : "";
+    $values['birthdate'] = ( isset($_POST['birthdate']) && $_POST['birthdate'] != "" ) ? 
+        date( "Y-m-d", strtotime( sanitize_text_field( $_POST['birthdate'] ) ) ) : null;
+    $values['birthplace'] = isset($_POST['birthplace']) ? 
+        sanitize_text_field( $_POST['birthplace'] ) : "";
+
+    $values['parents_married'] = isset($_POST['parents_married']) ? 
+        1 : 0;
+    $values['parents_married_church'] = isset($_POST['parents_married_church']) ? 
+        1 : 0;
+    $values['contact_email'] = isset($_POST['contact_email']) ? 
+        sanitize_email( $_POST['contact_email'] ) : "";
+    $values['address'] = isset($_POST['address']) ? 
+        sanitize_text_field( $_POST['address'] ) : "";
+    $values['city'] = isset($_POST['city']) ? 
+        sanitize_text_field( $_POST['city'] ) : "";
+    $values['state'] = isset($_POST['state']) ? 
+        sanitize_text_field( $_POST['state'] ) : "";
+    $values['zip'] = isset($_POST['zip']) ? 
+        sanitize_text_field( $_POST['zip'] ) : "";
+
+    $values['father_name'] = isset($_POST['father_name']) ? 
+        sanitize_text_field( $_POST['father_name'] ) : "";
+    $values['father_middle'] = isset($_POST['father_middle']) ? 
+        sanitize_text_field( $_POST['father_middle'] ) : "";
+    $values['father_last'] = isset($_POST['father_last']) ? 
+        sanitize_text_field( $_POST['father_last'] ) : "";
+    $values['father_email'] = isset($_POST['father_email']) ? 
+        sanitize_email( $_POST['father_email'] ) : "";
+    $values['father_phone'] = isset($_POST['father_phone']) ? 
+        sanitize_text_field( $_POST['father_phone'] ) : "";
+    $values['father_catholic'] = isset($_POST['father_catholic']) ? 
+        1 : 0;
+    $values['father_id'] = isset($_POST['father_id']) ? 
+        1 : 0;
+
+    $values['mother_name'] = isset($_POST['mother_name']) ? 
+        sanitize_text_field( $_POST['mother_name'] ) : "";
+    $values['mother_middle'] = isset($_POST['mother_middle']) ? 
+        sanitize_text_field( $_POST['mother_middle'] ) : "";
+    $values['mother_last'] = isset($_POST['mother_last']) ? 
+        sanitize_text_field( $_POST['mother_last'] ) : "";
+    $values['mother_email'] = isset($_POST['mother_email']) ? 
+        sanitize_email( $_POST['mother_email'] ) : "";
+    $values['mother_phone'] = isset($_POST['mother_phone']) ? 
+        sanitize_text_field( $_POST['mother_phone'] ) : "";
+    $values['mother_catholic'] = isset($_POST['mother_catholic']) ? 
+        1 : 0;
+    $values['mother_id'] = isset($_POST['mother_id']) ? 
+        1 : 0;
+    $values['mother_married_name'] = isset($_POST['mother_married_name']) ? 
+        sanitize_text_field( $_POST['mother_married_name'] ) : "";
+    $values['mmn_birth_certificate'] = isset($_POST['mmn_birth_certificate']) ? 
+        1 : 0;
+
+    $values['godfather_name'] = isset($_POST['godfather_name']) ? 
+        sanitize_text_field( $_POST['godfather_name'] ) : "";
+    $values['godfather_middle'] = isset($_POST['godfather_middle']) ? 
+        sanitize_text_field( $_POST['godfather_middle'] ) : "";
+    $values['godfather_last'] = isset($_POST['godfather_last']) ? 
+        sanitize_text_field( $_POST['godfather_last'] ) : "";
+    $values['godfather_email'] = isset($_POST['godfather_email']) ? 
+        sanitize_email( $_POST['godfather_email'] ) : "";
+    $values['godfather_phone'] = isset($_POST['godfather_phone']) ? 
+        sanitize_text_field( $_POST['godfather_phone'] ) : "";
+    $values['godfather_catholic'] = isset($_POST['godfather_catholic']) ? 
+        1 : 0;
+
+    $values['godmother_name'] = isset($_POST['godmother_name']) ? 
+        sanitize_text_field( $_POST['godmother_name'] ) : "";
+    $values['godmother_middle'] = isset($_POST['godmother_middle']) ? 
+        sanitize_text_field( $_POST['godmother_middle'] ) : "";
+    $values['godmother_last'] = isset($_POST['godmother_last']) ? 
+        sanitize_text_field( $_POST['godmother_last'] ) : "";
+    $values['godmother_email'] = isset($_POST['godmother_email']) ? 
+        sanitize_email( $_POST['godmother_email'] ) : "";
+    $values['godmother_phone'] = isset($_POST['godmother_phone']) ? 
+        sanitize_text_field( $_POST['godmother_phone'] ) : "";
+    $values['godmother_catholic'] = isset($_POST['godmother_catholic']) ? 
+        1 : 0;
+
+    $values['note'] = isset($_POST['note']) ? 
+        sanitize_text_field( $_POST['note'] ) : "";
+    $values['bautismal_code'] = isset($_POST['bautismal_code']) ? 
+        sanitize_text_field( $_POST['bautismal_code'] ) : "";
+
+    return $values;
+}
+
+/**
  * Check if the bench is available for the registry based on baptism date
  * 
  * If the registry doesn't have a baptism date set, it'll always return true
@@ -725,7 +969,7 @@ function placita_baptism_register_view_pdf() {
     $registry = intval($_REQUEST['baptism_registry']);
     $table_name = $wpdb->prefix . 'baptism_registers';
     $sql = sprintf(
-        "SELECT file
+        "SELECT *
         FROM %s
         WHERE id = $registry
         LIMIT 1",
@@ -734,32 +978,20 @@ function placita_baptism_register_view_pdf() {
 
     $results = $wpdb->get_results( $sql , ARRAY_A );
 
-    if ( count($results) == 0 ) {
+    if ( count($results) === 0 ) {
         wp_die("The registry you're looking for doesn't exist");
     }
 
     // If everything's good, show the pdf
-    $registry = $results[0];
-    wp_redirect( plugin_dir_url(__FILE__) . 'pdfs/' . rawurlencode($registry['file']) );
-    exit;
+    $values = $results[0];
+
+    placita_generate_pdf($values, true);
+
+    // wp_redirect( plugin_dir_url(__FILE__) . 'pdfs/' . rawurlencode($registry['file']) );
+    // exit;
 
 }
 add_action( 'admin_post_baptism_register_view_pdf', 'placita_baptism_register_view_pdf' );
-
-function language_switcher() {
-
-    if ( !defined('LANGUAGE') ) return false;
-
-    if (LANGUAGE == 'es') {
-        $l_slug = "en";
-        $l_name = "English";
-    } else {
-        $l_slug = "es";
-        $l_name = "Español";
-    }
-
-    echo "<a title=$l_name class='language-switcher' href='?lang=$l_slug'><button class='btn '>$l_name</button></a>";
-}
 
 function validate_phone($phone) {
     $phone = preg_replace('/\D/', '', $phone); //strip non-numeric characters
@@ -767,109 +999,37 @@ function validate_phone($phone) {
     else return false;
 }
 
-function parishes_select($name, $id, $classes = array(), $default = false, $placeholder = "Select the Parish") {
-    global $db;
-    $options = $db->select( "parishes", "*", ["ORDER"=>"name"] );
-
-    $classes_string = "";
-    foreach ($classes as $class) {
-        $classes_string .= $class;
-        $classes_string .= " ";
-    }
-
-    $output = "<select required name='$name' id='$id' class='$classes_string'>";
-    $output .= "<option selected='selected' disabled value=''>$placeholder</option>";
-    foreach ($options as $option) {
-        $selected = "";
-        if ($default == $option['id']) $selected = "selected";
-        $output .= "<option value='". $option['id'] ."' ". $selected .">". $option['name'] ."</option>";
-    }
-    $output .= "</select>";
-
-    echo $output;
-}
-
-function get_child($id = false) { // If id isn't provided, it'll return the most recently edited incomplete child of the current user
-    return false;
-
-    global $db, $current_user;
-    $child = array();
-
-    if ($id) {
-        $child = $db->select( "childs", "*", ["id" => $id, "LIMIT" => 1] );
-    } else {
-        $child = $db->select( "childs", "*", ["registrar" => $current_user["id"], "complete" => 0, "LIMIT" => 1, "ORDER" => ['lastedited' => "DESC"]] );
-    }
-
-    if (empty($child)) return false;
-    else return $child[0];
-
-}
-
-function is_registrar($child, $user) {
-    global $db;
-    $data = $db->select("childs", "id", ["id" => $child, "registrar" => $user, "LIMIT" => 1]);
-    if (empty($data)) return false;
-    else return true;
-}
-
-function user_has_incomplete_child($userid = false) { // Checks if the passed user (current user if empty) is halfway through finishng registring a child
-    global $db;
-
-    if ( !$userid ) {
-        global $current_user;
-        $userid = $current_user['id'];
-    }
-
-    if (!$userid) return false;
-
-    $data = $db->select("childs", "id", ["registrar" => $userid, "complete" => 0, "LIMIT" => 1]);
-    if ( !empty($data) && !$_SESSION['saved_for_later'] ) return true;
-    else return false;
-
-}
-
-
 add_action( 'admin_menu', 'my_admin_menu' );
 function my_admin_menu() {
-    add_menu_page( 'Baptism Registers', 'Baptism Registers', 'manage_baptism', 'baptism_registers', 'baptism_registers_page', 'dashicons-admin-page', 6  );
-    add_menu_page( 'Baptism Registers PDFs', 'Baptism Registers PDFs', 'manage_baptism', 'baptism_registers_pdfs', 'baptism_registers_pdfs_page', 'dashicons-admin-page', 7  );
+    add_menu_page(
+        'Baptism Registers',
+        'Baptism Registers',
+        'manage_baptism',
+        'baptism_registers',
+        'baptism_registers_page',
+        'dashicons-admin-page',
+        6
+    );
+
+    add_menu_page(
+        'Baptism Registers PDFs',
+        'Baptism Registers PDFs',
+        'manage_baptism',
+        'baptism_registers_pdfs',
+        'baptism_registers_pdfs_page',
+        'dashicons-admin-page',
+        7
+    );
 }
 
 function baptism_registers_page() {
-  require_once('baptism-registers-table.class.php');
-    
-  //Create an instance of our package class...
-  $testListTable = new Baptism_Registers_Table();
-  //Fetch, prepare, sort, and filter our data...
-  $testListTable->prepare_items();
 
-  ?>
-    <div class="wrap">
+    if ( isset($_GET['registry']) ) {
+        require_once('admin_pages/single-baptism-register.php');
+    } else {
+        require_once('admin_pages/baptism-registers-page.php');
+    }
 
-        <h2>Baptism Pre-registers</h2>
-        <img width=200 src="<?php echo plugin_dir_url(__FILE__) . 'media/images/outline-logo-b.png' ?>" />
-
-        <form action="admin-post.php" target="_blank" id="registries_export" method="post">
-            <h3>Generate Sitting Chart</h3>
-            <input type="hidden" name="action" value="export_registries">
-            <?php wp_nonce_field('placita_export_registries'); ?>
-            <span>Date:</span><input type="text" class="registries_export_date" name="export_date">
-            <button type="submit"class="button-primary">Generate</button>
-        </form>
-
-        <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-        <form id="movies-filter" method="get">
-            <!-- For plugins, we also need to ensure that the form posts back to our current page -->
-            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-            <!-- Search Form -->
-            <?php $testListTable->search_box('Search', 'search'); ?>
-            <!-- Now we can render the completed list table -->
-            <?php $testListTable->display() ?>
-        </form>
-
-    </div>
-  <?php
 }
 
 // Export all registries for a given datetime as a PDF
@@ -952,7 +1112,7 @@ function placita_export_registries() {
 }
 
 function baptism_registers_pdfs_page() {
-  require_once('admin-baptism-registers.php');
+  require_once('classes/class.baptism-registers-pdfs-table.php');
     
   //Create an instance of our package class...
   $testListTable = new Placita_List_Table();

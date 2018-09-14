@@ -133,7 +133,7 @@ class PageTemplater {
 			return $template;
 		}
 
-		$file = plugin_dir_path( __FILE__ ). get_post_meta(
+		$file = plugin_dir_path( __FILE__ ) . '../templates/' . get_post_meta(
 			$post->ID, '_wp_page_template', true
 		);
 
