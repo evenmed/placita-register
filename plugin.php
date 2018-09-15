@@ -10,11 +10,11 @@ License: GPL2
 */
 
 global $placita_db_version, $bench_numbers;
-$placita_db_version = '1.7';
+$placita_db_version = '1.8';
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17');
 
 // #TODO: make this into an object with properties etc for cleaner code.
-// $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'parents_married', 'parents_married_church', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'father_catholic', 'father_id', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_catholic', 'mother_id', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godfather_catholic', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'godmother_catholic', 'note', 'bautismal_code');
+// $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'note', 'bautismal_code');
 
 // Create or update db
 function placita_install_db() {
@@ -47,15 +47,11 @@ function placita_install_db() {
             father_last varchar(255) NOT NULL,
             father_email varchar(255) NOT NULL,
             father_phone varchar(255) NOT NULL,
-            father_catholic tinyint(1) DEFAULT '0' NOT NULL,
-            father_id tinyint(1) DEFAULT '0' NOT NULL,
             mother_name varchar(255) NOT NULL,
             mother_middle varchar(255) NOT NULL,
             mother_last varchar(255) NOT NULL,
             mother_email varchar(255) NOT NULL,
             mother_phone varchar(255) NOT NULL,
-            mother_catholic tinyint(1) DEFAULT '0' NOT NULL,
-            mother_id tinyint(1) DEFAULT '0' NOT NULL,
             mother_married_name varchar(255) NOT NULL,
             mmn_birth_certificate tinyint(1) DEFAULT '0' NOT NULL,
             godfather_name varchar(255) NOT NULL,
@@ -63,13 +59,11 @@ function placita_install_db() {
             godfather_last varchar(255) NOT NULL,
             godfather_email varchar(255) NOT NULL,
             godfather_phone varchar(255) NOT NULL,
-            godfather_catholic tinyint(1) DEFAULT '0' NOT NULL,
             godmother_name varchar(255) NOT NULL,
             godmother_middle varchar(255) NOT NULL,
             godmother_last varchar(255) NOT NULL,
             godmother_email varchar(255) NOT NULL,
             godmother_phone varchar(255) NOT NULL,
-            godmother_catholic tinyint(1) DEFAULT '0' NOT NULL,
             note text NULL,
             bautismal_code varchar(255) NULL,
             benches enum('A1','B1','C1','D1','E1','A2','B2','C2','D2','E2','A3','B3','C3','D3','E3','A4','B4','C4','D4','E4','A5','B5','C5','D5','E5','A6','B6','C6','D6','E6','A7','B7','C7','D7','E7','A8','B8','C8','D8','E8','A9','B9','C9','D9','E9','A10','B10','C10','D10','E10','A11','B11','C11','D11','E11','A12','B12','C12','D12','E12','A13','B13','C13','D13','E13','A14','B14','C14','D14','E14','A15','B15','C15','D15','E15','A16','B16','C16','D16','E16','A17','B17','C17','D17','E17') NULL,
@@ -285,8 +279,6 @@ function placita_handle_baptism_register_form() {
     <div><strong>Last Name:</strong> {$values['father_last']}</div>
     <div><strong>Email:</strong> {$values['father_email']}</div>
     <div><strong>Phone:</strong> {$values['father_phone']}</div>
-    <div><strong>Catholic:</strong> {$checkbox($values['father_catholic'])}</div>
-    <div><strong>ID:</strong> {$checkbox($values['father_id'])}</div>
     </section>
 
     <section style="width:50%; float:left;">
@@ -296,8 +288,6 @@ function placita_handle_baptism_register_form() {
     <div><strong>Last Name:</strong> {$values['mother_last']}</div>
     <div><strong>Email:</strong> {$values['mother_email']}</div>
     <div><strong>Phone:</strong> {$values['mother_phone']}</div>
-    <div><strong>Catholic:</strong> {$checkbox($values['mother_catholic'])}</div>
-    <div><strong>ID:</strong> {$checkbox($values['mother_id'])}</div>
     <div><strong>Married Last Name:</strong> {$values['mother_married_name']}</div>
     <div><strong>Birth Certificate:</strong> {$checkbox($values['mmn_birth_certificate'])}</div>
     </section>
@@ -313,7 +303,6 @@ function placita_handle_baptism_register_form() {
     <div><strong>Last Name:</strong> {$values['godfather_last']}</div>
     <div><strong>Email:</strong> {$values['godfather_email']}</div>
     <div><strong>Phone:</strong> {$values['godfather_phone']}</div>
-    <div><strong>Catholic:</strong> {$checkbox($values['godfather_catholic'])}</div>
     </section>
 
     <section style="width:50%; float:left;">
@@ -323,7 +312,6 @@ function placita_handle_baptism_register_form() {
     <div><strong>Last Name:</strong> {$values['godmother_last']}</div>
     <div><strong>Email:</strong> {$values['godmother_email']}</div>
     <div><strong>Phone:</strong> {$values['godmother_phone']}</div>
-    <div><strong>Catholic:</strong> {$checkbox($values['godmother_catholic'])}</div>
     </section>
 
     <br/>
@@ -428,8 +416,6 @@ function placita_generate_pdf($values, $inline = false) {
      <h2 style="margin-bottom:0;">Parent's Info</h2>
      <hr />
      <section style="width:50%; float:left;">
-     <div><strong>Married:</strong> {$checkbox($values['parents_married'])}</div>
-     <div><strong>Married in Church:</strong> {$checkbox($values['parents_married_church'])}</div>
      <div><strong>Street Address:</strong> {$values['address']}</div>
      <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
      </section>
@@ -446,8 +432,6 @@ function placita_generate_pdf($values, $inline = false) {
      <div><strong>Last Name:</strong> {$values['father_last']}</div>
      <div><strong>Email:</strong> {$values['father_email']}</div>
      <div><strong>Phone:</strong> {$values['father_phone']}</div>
-     <div><strong>Catholic:</strong> {$checkbox($values['father_catholic'])}</div>
-     <div><strong>ID:</strong> {$checkbox($values['father_id'])}</div>
      </section>
  
      <section style="width:50%; float:left;">
@@ -457,8 +441,6 @@ function placita_generate_pdf($values, $inline = false) {
      <div><strong>Last Name:</strong> {$values['mother_last']}</div>
      <div><strong>Email:</strong> {$values['mother_email']}</div>
      <div><strong>Phone:</strong> {$values['mother_phone']}</div>
-     <div><strong>Catholic:</strong> {$checkbox($values['mother_catholic'])}</div>
-     <div><strong>ID:</strong> {$checkbox($values['mother_id'])}</div>
      <div><strong>Married Last Name:</strong> {$values['mother_married_name']}</div>
      <div><strong>Birth Certificate:</strong> {$checkbox($values['mmn_birth_certificate'])}</div>
      </section>
@@ -474,7 +456,6 @@ function placita_generate_pdf($values, $inline = false) {
      <div><strong>Last Name:</strong> {$values['godfather_last']}</div>
      <div><strong>Email:</strong> {$values['godfather_email']}</div>
      <div><strong>Phone:</strong> {$values['godfather_phone']}</div>
-     <div><strong>Catholic:</strong> {$checkbox($values['godfather_catholic'])}</div>
      </section>
  
      <section style="width:50%; float:left;">
@@ -484,7 +465,6 @@ function placita_generate_pdf($values, $inline = false) {
      <div><strong>Last Name:</strong> {$values['godmother_last']}</div>
      <div><strong>Email:</strong> {$values['godmother_email']}</div>
      <div><strong>Phone:</strong> {$values['godmother_phone']}</div>
-     <div><strong>Catholic:</strong> {$checkbox($values['godmother_catholic'])}</div>
      </section>
  
      <br/>
@@ -816,10 +796,10 @@ function sanitize_registry_data() {
     $values['birthplace'] = isset($_POST['birthplace']) ? 
         sanitize_text_field( $_POST['birthplace'] ) : "";
 
-    $values['parents_married'] = isset($_POST['parents_married']) ? 
-        1 : 0;
-    $values['parents_married_church'] = isset($_POST['parents_married_church']) ? 
-        1 : 0;
+    // $values['parents_married'] = isset($_POST['parents_married']) ? 
+    //     1 : 0;
+    // $values['parents_married_church'] = isset($_POST['parents_married_church']) ? 
+    //     1 : 0;
     $values['contact_email'] = isset($_POST['contact_email']) ? 
         sanitize_email( $_POST['contact_email'] ) : "";
     $values['address'] = isset($_POST['address']) ? 
@@ -841,10 +821,10 @@ function sanitize_registry_data() {
         sanitize_email( $_POST['father_email'] ) : "";
     $values['father_phone'] = isset($_POST['father_phone']) ? 
         sanitize_text_field( $_POST['father_phone'] ) : "";
-    $values['father_catholic'] = isset($_POST['father_catholic']) ? 
-        1 : 0;
-    $values['father_id'] = isset($_POST['father_id']) ? 
-        1 : 0;
+    // $values['father_catholic'] = isset($_POST['father_catholic']) ? 
+    //     1 : 0;
+    // $values['father_id'] = isset($_POST['father_id']) ? 
+    //     1 : 0;
 
     $values['mother_name'] = isset($_POST['mother_name']) ? 
         sanitize_text_field( $_POST['mother_name'] ) : "";
@@ -856,10 +836,10 @@ function sanitize_registry_data() {
         sanitize_email( $_POST['mother_email'] ) : "";
     $values['mother_phone'] = isset($_POST['mother_phone']) ? 
         sanitize_text_field( $_POST['mother_phone'] ) : "";
-    $values['mother_catholic'] = isset($_POST['mother_catholic']) ? 
-        1 : 0;
-    $values['mother_id'] = isset($_POST['mother_id']) ? 
-        1 : 0;
+    // $values['mother_catholic'] = isset($_POST['mother_catholic']) ? 
+    //     1 : 0;
+    // $values['mother_id'] = isset($_POST['mother_id']) ? 
+    //     1 : 0;
     $values['mother_married_name'] = isset($_POST['mother_married_name']) ? 
         sanitize_text_field( $_POST['mother_married_name'] ) : "";
     $values['mmn_birth_certificate'] = isset($_POST['mmn_birth_certificate']) ? 
@@ -875,8 +855,8 @@ function sanitize_registry_data() {
         sanitize_email( $_POST['godfather_email'] ) : "";
     $values['godfather_phone'] = isset($_POST['godfather_phone']) ? 
         sanitize_text_field( $_POST['godfather_phone'] ) : "";
-    $values['godfather_catholic'] = isset($_POST['godfather_catholic']) ? 
-        1 : 0;
+    // $values['godfather_catholic'] = isset($_POST['godfather_catholic']) ? 
+    //     1 : 0;
 
     $values['godmother_name'] = isset($_POST['godmother_name']) ? 
         sanitize_text_field( $_POST['godmother_name'] ) : "";
@@ -888,8 +868,8 @@ function sanitize_registry_data() {
         sanitize_email( $_POST['godmother_email'] ) : "";
     $values['godmother_phone'] = isset($_POST['godmother_phone']) ? 
         sanitize_text_field( $_POST['godmother_phone'] ) : "";
-    $values['godmother_catholic'] = isset($_POST['godmother_catholic']) ? 
-        1 : 0;
+    // $values['godmother_catholic'] = isset($_POST['godmother_catholic']) ? 
+    //     1 : 0;
 
     $values['note'] = isset($_POST['note']) ? 
         sanitize_text_field( $_POST['note'] ) : "";
