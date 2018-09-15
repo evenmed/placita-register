@@ -163,7 +163,12 @@ function placita_scripts() {
         wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . 'vendor/bootstrap/css/bootstrap.min.css' );
         wp_enqueue_style( 'chosen', plugin_dir_url( __FILE__ ) . 'vendor/chosen/chosen.css' );
         wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'vendor/jquery-ui/jquery-ui.min.css' );
-        wp_enqueue_style( 'page-template', plugin_dir_url( __FILE__ ) . 'css/style.css' );
+        wp_enqueue_style(
+            'page-template',
+            plugin_dir_url( __FILE__ ) . 'css/style.css',
+            null,
+            '2.0'
+        );
 
         wp_register_script('jquery-ui', plugin_dir_url( __FILE__ ) . 'vendor/jquery-ui/jquery-ui.min.js', array('jquery'),'', true);
         wp_enqueue_script('jquery-ui');
