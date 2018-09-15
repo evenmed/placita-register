@@ -1,8 +1,8 @@
 <div class="container-fluid  full-height" id="register_form-wrap">
     <div id="register_form-main" class="text-center row">
         <div class="col-xs-10 col-xs-offset-1 text-center">
-            <img class="logo" src="<?php echo plugin_dir_url(__FILE__); ?>../media/images/outline-logo-w.png" />
-            <div class="outline-text-white">Baptism Pre-register</div>
+            <img class="logo" src="<?php echo plugin_dir_url(__FILE__); ?>../media/images/outline-logo-b.png" />
+            <div class="outline-text">Baptism Pre-register</div>
         </div>
         <div class="col-xs-12">
             <!-- multistep form -->

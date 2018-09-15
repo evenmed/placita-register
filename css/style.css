@@ -24,7 +24,7 @@ img.banner + .banner-divider {
   width: 100%;
   max-width: 300px;
 }
-.logo + .outline-text-white {
+.logo + .outline-text {
   max-width: 300px;
   margin: 0 auto;
 }
@@ -124,12 +124,12 @@ img.banner + .banner-divider {
   border-top: 0;
   background-color: #f79421;
 }
-.outline-text-white {
+.outline-text {
   display: block;
   margin: 0;
   padding: 2px 5px;
-  color: white;
-  border: 1px solid white;
+  color: #444;
+  border: 1px solid #444;
   text-transform: uppercase;
   font-weight: 200;
   letter-spacing: 1px;
@@ -251,7 +251,7 @@ img.banner + .banner-divider {
   width: 18px;
   display: inline-block;
   margin: 0px 9px -3px 10px;
-  border: 3px solid #fff;
+  border: 3px solid #444;
   border-radius: 50%;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
@@ -337,16 +337,17 @@ img.banner + .banner-divider {
   z-index: -1;
 }
 #register_form-main {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(255, 255, 255, 0.8);
   width: 90%;
   margin: 30px auto;
   padding: 20px 5px 10px;
   max-width: 800px;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.3);
 }
 #register-form .form-control {
   border-color: #f79421;
   border-width: 1px;
-  color: white;
+  color: #444;
   background: transparent;
   padding: 2px 5px;
   border-radius: 0;
@@ -410,11 +411,11 @@ img.banner + .banner-divider {
   margin-bottom: 1em;
 }
 .multistep-form label {
-  color: white;
+  color: #444;
 }
 .multistep-form fieldset {
   width: 100%;
-  color: white;
+  color: #444;
   border: 0;
   margin: 0;
   padding: 0;
@@ -427,7 +428,7 @@ img.banner + .banner-divider {
 }
 .multistep-form fieldset section:not(:first-child) {
   padding-top: 20px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.3);
+  border-top: 1px dashed rgba(0, 0, 0, 0.3);
 }
 .multistep-form fieldset section h2 {
   margin-bottom: 20px;
@@ -469,14 +470,14 @@ img.banner + .banner-divider {
 .fs-title {
   font-size: 15px;
   text-transform: uppercase;
-  color: #ffffff;
+  color: #444;
   margin-bottom: 10px;
   margin-top: 0;
 }
 .fs-subtitle {
   font-weight: normal;
   font-size: 13px;
-  color: #c3c3c3;
+  color: #888;
   margin-bottom: 20px;
   margin-top: 0;
   padding: 0;
@@ -489,7 +490,7 @@ img.banner + .banner-divider {
 }
 .progressbar li {
   list-style-type: none;
-  color: white;
+  color: #444;
   text-transform: uppercase;
   font-size: 9px;
   width: 25%;
@@ -504,15 +505,15 @@ img.banner + .banner-divider {
   line-height: 18px;
   display: block;
   font-size: 10px;
-  color: #fff;
-  border: 1px solid white;
+  color: #444;
+  border: 1px solid #444;
   margin: 0 auto 5px auto;
 }
 .progressbar li:after {
   content: "";
   width: calc(100% - 20px);
   height: 2px;
-  background: white;
+  background: #444;
   position: absolute;
   left: calc(-50% + 10px);
   top: 9px;
