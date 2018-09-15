@@ -79,21 +79,23 @@
                         <div class="form-group col-sm-6">
                           <input required type="email" value="<?php echo $child['contact_email'] ? $child['contact_email'] : "" ?>" class="form-control" name="contact_email" placeholder="Contact Email" />
                         </div>
-                      </div>
 
-                      <div class="row">
                         <div class="form-group col-sm-6">
                             <input required type="text" value="<?php echo $child['address'] ? $child['address'] : "" ?>" class="form-control" name="address" placeholder="Street Address" />
                         </div>
-                        <div class="form-group col-sm-6">
-                          <input required type="text" value="<?php echo $child['city'] ? $child['city'] : "" ?>" class="form-control" name="city" placeholder="City" />
-                        </div>
+
                       </div>
 
                       <div class="row">
                         <div class="form-group col-sm-6">
+                          <input required type="text" value="<?php echo $child['city'] ? $child['city'] : "" ?>" class="form-control" name="city" placeholder="City" />
+                        </div>
+                        
+                        <div class="form-group col-sm-6">
                           <input required type="text" value="<?php echo $child['state'] ? $child['state'] : "" ?>" class="form-control" name="state" placeholder="State" />
                         </div>
+                      </div>
+                      <div class="row">
                         <div class="form-group col-sm-6">
                           <input required type="text" value="<?php echo $child['zip'] ? $child['zip'] : "" ?>" class="form-control" name="zip" placeholder="Zip Code" />
                         </div>
