@@ -248,117 +248,18 @@ function placita_handle_baptism_register_form() {
     //Sanitize everything and put it into our $values array
     $values = sanitize_registry_data();
 
-    // PDF structure
-    $html = <<<PDF
-    <h1>La Placita Baptism Pre-Register</h1>
+    // Generate the pdf with the sanitized values
+    $pdf = placita_generate_pdf($values, false);
 
-    <h2 style="margin-bottom:0;">Child's Info</h2>
-    <hr />
-    <section style="width:50%; float:left;">
-    <div><strong>First Name:</strong> {$values['first_name']}</div>
-    <div><strong>Middle Name:</strong> {$values['middle_name']}</div>
-    <div><strong>Last Name:</strong> {$values['last_name']}</div>
-    </section>
-    <section style="width:50%; float:left;">
-    <div><strong>Sex:</strong> {$values['gender']}</div>
-    <div><strong>Birthdate:</strong> {$values['birthdate']}</div>
-    <div><strong>Birthplace:</strong> {$values['birthplace']}</div>
-    </section>
-
-
-    <h2 style="margin-bottom:0;">Parent's Info</h2>
-    <hr />
-    <section style="width:50%; float:left;">
-    <div><strong>Street Address:</strong> {$values['address']}</div>
-    <div><strong>Main Phone:</strong> {$values['main_phone']}</div>
-    <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
-    </section>
-    <section style="width:50%; float:left;">
-    <div><strong>City:</strong> {$values['city']}</div>
-    <div><strong>State:</strong> {$values['state']}</div>
-    <div><strong>Zip Code:</strong> {$values['zip']}</div>
-    </section>
-
-    <section style="width:50%; float:left;">
-    <h3>Father</h3>
-    <div><strong>First Name:</strong> {$values['father_name']}</div>
-    <div><strong>Middle Name:</strong> {$values['father_middle']}</div>
-    <div><strong>Last Name:</strong> {$values['father_last']}</div>
-    <div><strong>Email:</strong> {$values['father_email']}</div>
-    <div><strong>Phone:</strong> {$values['father_phone']}</div>
-    </section>
-
-    <section style="width:50%; float:left;">
-    <h3>Mother</h3>
-    <div><strong>First Name:</strong> {$values['mother_name']}</div>
-    <div><strong>Middle Name:</strong> {$values['mother_middle']}</div>
-    <div><strong>Last Name:</strong> {$values['mother_last']}</div>
-    <div><strong>Email:</strong> {$values['mother_email']}</div>
-    <div><strong>Phone:</strong> {$values['mother_phone']}</div>
-    <div><strong>Married Last Name:</strong> {$values['mother_married_name']}</div>
-    <div><strong>Birth Certificate:</strong> {$checkbox($values['mmn_birth_certificate'])}</div>
-    </section>
-
-
-    <h2 style="margin-bottom:0;">Godparent's Info</h2>
-    <hr />
-
-    <section style="width:50%; float:left;">
-    <h3>Godfather</h3>
-    <div><strong>First Name:</strong> {$values['godfather_name']}</div>
-    <div><strong>Middle Name:</strong> {$values['godfather_middle']}</div>
-    <div><strong>Last Name:</strong> {$values['godfather_last']}</div>
-    <div><strong>Email:</strong> {$values['godfather_email']}</div>
-    <div><strong>Phone:</strong> {$values['godfather_phone']}</div>
-    </section>
-
-    <section style="width:50%; float:left;">
-    <h3>Godmother</h3>
-    <div><strong>First Name:</strong> {$values['godmother_name']}</div>
-    <div><strong>Middle Name:</strong> {$values['godmother_middle']}</div>
-    <div><strong>Last Name:</strong> {$values['godmother_last']}</div>
-    <div><strong>Email:</strong> {$values['godmother_email']}</div>
-    <div><strong>Phone:</strong> {$values['godmother_phone']}</div>
-    </section>
-
-    <br/>
-    <br/>
-
-    <h3>Notes</h3>
-    <div>{$values['note']}</div>
-
-PDF;
-  
-    $time = time();
-
-    // PDF title
-    $title = "Baptism_Preregister_{$values['first_name']}_{$values['last_name']}_{$time}.pdf";
-    
-    // Remove anything which isn't a word, whitespace, number
-    // or any of the following caracters -_~,;:[]().
-    // If you don't need to handle multi-byte characters
-    // Thanks @Łukasz Rysiak!
-    $title = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $title);
-    // Remove any runs of periods (thanks falstro!)
-    $title = preg_replace("([\.]{2,})", '', $title);
-    
-    $file = plugin_dir_path(__FILE__) . 'pdfs/' . $title;
-
-    // Require composer autoload
-    require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
-    $mpdf = new mPDF('', 'Letter');
-    $mpdf->SetTitle( $title );
-    $mpdf->WriteHTML($html);
-    //   $content = $mpdf->Output( $title, 'I' );
-    $content = $mpdf->Output( $file, 'F' );
+    $file = $pdf['file'];
 
     if ( file_exists( $file ) ) {
-        wp_mail(array("baptism@laplacitachurch.org", "emvenmed@gmail.com"), "La Placita Baptism Pre-register", "Attached you will find the PDF file with the pre-register info.", array(), $file);
+        wp_mail(array("baptism@laplacitachurch.org"), "La Placita Baptism Pre-register", "Attached you will find the PDF file with the pre-register info.", array(), $file);
         if ( is_writable($file) )
             unlink($file);
     }
 
-    $values['file'] = $title;
+    $values['file'] = $pdf['title'];
 
     // Save evrything to the db
     global $wpdb;
@@ -494,11 +395,9 @@ PDF;
      // or any of the following caracters -_~,;:[]().
      // If you don't need to handle multi-byte characters
      // Thanks @Łukasz Rysiak!
-     $file = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $title);
+     $title = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $title);
      // Remove any runs of periods (thanks falstro!)
-     $file = preg_replace("([\.]{2,})", '', $title);
-     
-     $file = plugin_dir_path(__FILE__) . 'pdfs/' . $title;
+     $title = preg_replace("([\.]{2,})", '', $title);
  
      // Require composer autoload
      require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
@@ -510,6 +409,7 @@ PDF;
         $mpdf->Output( $title, 'I' );
         return true;
      } else {
+        $file = plugin_dir_path(__FILE__) . 'pdfs/' . $title;
         $mpdf->Output( $file, 'F' );
         return array(
             'file' => $file,
@@ -792,7 +692,7 @@ function placita_update_registry() {
  */
 function sanitize_registry_data() {
     $values = array();
-    error_log(print_r($_POST, true));
+    
     $values['first_name'] = isset($_POST['first_name']) ? 
         sanitize_text_field( $_POST['first_name'] ) : "";
     $values['middle_name'] = isset($_POST['middle_name']) ? 
@@ -887,8 +787,7 @@ function sanitize_registry_data() {
         sanitize_text_field( $_POST['note'] ) : "";
     $values['bautismal_code'] = isset($_POST['bautismal_code']) ? 
         sanitize_text_field( $_POST['bautismal_code'] ) : "";
-
-    error_log( print_r($values, true) );
+        
 
     return $values;
 }
