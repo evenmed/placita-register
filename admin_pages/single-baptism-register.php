@@ -104,6 +104,10 @@ $child = $results[0];
                 <h2 class="fs-title">Parents</h2>
 
                 <div class="row">
+                    <div class="form-group col-sm-6">
+                        <label for="main_phone">Main Phone</label>
+                        <input required type="text" value="<?php echo $child['main_phone'] ? $child['main_phone'] : "" ?>" class="form-control" name="main_phone" placeholder="Main Phone" />
+                    </div>
 
                     <div class="form-group col-sm-6">
                         <label for="contact_email">Contact Email</label>

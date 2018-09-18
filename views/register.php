@@ -77,25 +77,33 @@
                       <div class="row">
 
                         <div class="form-group col-sm-6">
+                          <input required type="text" value="<?php echo $child['main_phone'] ? $child['main_phone'] : "" ?>" class="form-control" name="main_phone" placeholder="Main Phone" />
+                        </div>
+
+                        <div class="form-group col-sm-6">
                           <input required type="email" value="<?php echo $child['contact_email'] ? $child['contact_email'] : "" ?>" class="form-control" name="contact_email" placeholder="Contact Email" />
                         </div>
+
+                      </div>
+
+                      <div class="row">
 
                         <div class="form-group col-sm-6">
                             <input required type="text" value="<?php echo $child['address'] ? $child['address'] : "" ?>" class="form-control" name="address" placeholder="Street Address" />
                         </div>
 
-                      </div>
-
-                      <div class="row">
                         <div class="form-group col-sm-6">
                           <input required type="text" value="<?php echo $child['city'] ? $child['city'] : "" ?>" class="form-control" name="city" placeholder="City" />
                         </div>
+
+                      </div>
+
+                      <div class="row">
                         
                         <div class="form-group col-sm-6">
                           <input required type="text" value="<?php echo $child['state'] ? $child['state'] : "" ?>" class="form-control" name="state" placeholder="State" />
                         </div>
-                      </div>
-                      <div class="row">
+                        
                         <div class="form-group col-sm-6">
                           <input required type="text" value="<?php echo $child['zip'] ? $child['zip'] : "" ?>" class="form-control" name="zip" placeholder="Zip Code" />
                         </div>
@@ -128,7 +136,7 @@
 
                       <div class="row">
                         <div class="form-group col-sm-6">
-                          <input required type="tel" value="<?php echo $child['father_phone'] ? $child['father_phone'] : ($current_user['phone'] ? $current_user['phone'] : ""); ?>" class="form-control" name="father_phone" placeholder="Father's Phone" />
+                          <input required type="tel" value="<?php echo $child['father_phone'] ? $child['father_phone'] : ""; ?>" class="form-control" name="father_phone" placeholder="Father's Phone" />
                         </div>
                       </div>
                     </section>

@@ -10,11 +10,11 @@ License: GPL2
 */
 
 global $placita_db_version, $bench_numbers;
-$placita_db_version = '1.9';
+$placita_db_version = '1.10';
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','D18','D19','D20','D21','D22','D23','D24','D25','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17','E18','E19','E20','E21','E22','E23','E24','E25');
 
 // #TODO: make this into an object with properties etc for cleaner code.
-// $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'note', 'bautismal_code');
+// $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'main_phone', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'note', 'bautismal_code');
 
 // Create or update db
 function placita_install_db() {
@@ -37,6 +37,7 @@ function placita_install_db() {
             gender enum('male', 'female') DEFAULT 'male' NOT NULL,
             birthdate date NOT NULL,
             birthplace varchar(255) NOT NULL,
+            main_phone varchar(255) NOT NULL,
             contact_email varchar(255) NOT NULL,
             address varchar(255) NOT NULL,
             city varchar(255) NOT NULL,
@@ -236,7 +237,7 @@ add_action( 'admin_enqueue_scripts', 'placita_admin_scripts', 10 );
 function register_page( $redirect = true ){
 
     $redirect;
-
+    $child = array();
     require_once("views/register.php");
 }
 
@@ -269,6 +270,7 @@ function placita_handle_baptism_register_form() {
     <hr />
     <section style="width:50%; float:left;">
     <div><strong>Street Address:</strong> {$values['address']}</div>
+    <div><strong>Main Phone:</strong> {$values['main_phone']}</div>
     <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
     </section>
     <section style="width:50%; float:left;">
@@ -336,9 +338,9 @@ PDF;
     // or any of the following caracters -_~,;:[]().
     // If you don't need to handle multi-byte characters
     // Thanks @Łukasz Rysiak!
-    $file = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $title);
+    $title = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $title);
     // Remove any runs of periods (thanks falstro!)
-    $file = preg_replace("([\.]{2,})", '', $title);
+    $title = preg_replace("([\.]{2,})", '', $title);
     
     $file = plugin_dir_path(__FILE__) . 'pdfs/' . $title;
 
@@ -351,7 +353,9 @@ PDF;
     $content = $mpdf->Output( $file, 'F' );
 
     if ( file_exists( $file ) ) {
-        wp_mail(array("baptism@laplacitachurch.org"), "La Placita Baptism Pre-register", "Attached you will find the PDF file with the pre-register info.", array(), $file);
+        wp_mail(array("baptism@laplacitachurch.org", "emvenmed@gmail.com"), "La Placita Baptism Pre-register", "Attached you will find the PDF file with the pre-register info.", array(), $file);
+        if ( is_writable($file) )
+            unlink($file);
     }
 
     $values['file'] = $title;
@@ -422,6 +426,7 @@ function placita_generate_pdf($values, $inline = false) {
      <hr />
      <section style="width:50%; float:left;">
      <div><strong>Street Address:</strong> {$values['address']}</div>
+     <div><strong>Main Phone:</strong> {$values['main_phone']}</div>
      <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
      </section>
      <section style="width:50%; float:left;">
@@ -787,7 +792,7 @@ function placita_update_registry() {
  */
 function sanitize_registry_data() {
     $values = array();
-
+    error_log(print_r($_POST, true));
     $values['first_name'] = isset($_POST['first_name']) ? 
         sanitize_text_field( $_POST['first_name'] ) : "";
     $values['middle_name'] = isset($_POST['middle_name']) ? 
@@ -805,6 +810,8 @@ function sanitize_registry_data() {
     //     1 : 0;
     // $values['parents_married_church'] = isset($_POST['parents_married_church']) ? 
     //     1 : 0;
+    $values['main_phone'] = isset($_POST['main_phone']) ? 
+        sanitize_text_field( $_POST['main_phone'] ) : "";
     $values['contact_email'] = isset($_POST['contact_email']) ? 
         sanitize_email( $_POST['contact_email'] ) : "";
     $values['address'] = isset($_POST['address']) ? 
@@ -880,6 +887,8 @@ function sanitize_registry_data() {
         sanitize_text_field( $_POST['note'] ) : "";
     $values['bautismal_code'] = isset($_POST['bautismal_code']) ? 
         sanitize_text_field( $_POST['bautismal_code'] ) : "";
+
+    error_log( print_r($values, true) );
 
     return $values;
 }
