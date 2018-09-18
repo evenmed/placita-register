@@ -10,8 +10,8 @@ License: GPL2
 */
 
 global $placita_db_version, $bench_numbers;
-$placita_db_version = '1.8';
-$bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17');
+$placita_db_version = '1.9';
+$bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','D18','D19','D20','D21','D22','D23','D24','D25','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17','E18','E19','E20','E21','E22','E23','E24','E25');
 
 // #TODO: make this into an object with properties etc for cleaner code.
 // $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'note', 'bautismal_code');
@@ -66,7 +66,7 @@ function placita_install_db() {
             godmother_phone varchar(255) NOT NULL,
             note text NULL,
             bautismal_code varchar(255) NULL,
-            benches enum('A1','B1','C1','D1','E1','A2','B2','C2','D2','E2','A3','B3','C3','D3','E3','A4','B4','C4','D4','E4','A5','B5','C5','D5','E5','A6','B6','C6','D6','E6','A7','B7','C7','D7','E7','A8','B8','C8','D8','E8','A9','B9','C9','D9','E9','A10','B10','C10','D10','E10','A11','B11','C11','D11','E11','A12','B12','C12','D12','E12','A13','B13','C13','D13','E13','A14','B14','C14','D14','E14','A15','B15','C15','D15','E15','A16','B16','C16','D16','E16','A17','B17','C17','D17','E17') NULL,
+            benches enum('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','D18','D19','D20','D21','D22','D23','D24','D25','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17','E18','E19','E20','E21','E22','E23','E24','E25') NULL,
             priest varchar(255) NULL,
             file varchar(255) NULL,
             amount_collected decimal(13,2) DEFAULT '0.00' NOT NULL,
@@ -724,7 +724,7 @@ function placita_update_registry() {
                 $value = $date ? $date->format('Y/m/d H:i') : '';
 
                 // Get the benches that are already occupied at the baptism's datetime
-                global $bench_numbers, $wpdb;
+                global $wpdb;
 
                 $table_name = $wpdb->prefix . 'baptism_registers';
                 $unavailable_benches = array();
@@ -1031,7 +1031,7 @@ function placita_export_registries() {
 
     require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
 
-    global $wpdb, $bench_numbers;
+    global $wpdb;
 
     $table_name = $wpdb->prefix . 'baptism_registers';
 
@@ -1048,17 +1048,17 @@ function placita_export_registries() {
 
     $letters = array('E', 'D', 'C', 'B', 'A');
 
-    $html = '<h3 style="text-align:center;">';
+    $html = '<h3>';
     $html .= $date->format("l, jS \of F Y");
     $html .= '<br/>';
     $html .= $date->format("\a\\t h:i A");
     $html .= '</h3>';
-    $html .= '<table style="width: 100%; margin: 0 auto; font-size: 12px;" cellspacing=0>';
+    $html .= '<table cellspacing=0>';
 
     $html .= '<thead>';
     $html .= '<tr>';
     foreach( $letters as $l ) {
-        $html .= '<th style="border: 1px solid; height: 30px; font-size: 14px;" colspan="2">';
+        $html .= '<th class="column-'. $l .'" colspan="2">';
         $html .= $l;
         $html .= '</th>';
     }
@@ -1066,13 +1066,13 @@ function placita_export_registries() {
     $html .= '</thead>';
     $html .= '<tbody>';
     
-    for( $i=1; $i<18; $i++ ) {
+    for( $i=1; $i<26; $i++ ) {
         $html .= '<tr>';
         foreach( $letters as $l ) {
-            $html .= '<td style="border: 1px solid; width: 30px; height: 38px; text-align: center;">';
+            $html .= '<td class="number row-'. $i .' number-column-'. $l .'">';
             $html .= $i;
             $html .= '</td>';
-            $html .= '<td style="border: 1px solid; width: 170px; height: 38px;">';
+            $html .= '<td class="name row-'. $i .' column-'. $l .'">';
             foreach( $results as $r ) {
                 if ( $r['benches'] == $l . $i ) {
                     $html .= $r['first_name'] . ' ';
@@ -1090,6 +1090,9 @@ function placita_export_registries() {
     $html .= '</div>';
 
     $mpdf = new mPDF('', 'Letter-L', 0, 'dejavuSans', 6, 6, 6, 0);
+
+    $stylesheet = file_get_contents( plugin_dir_path(__FILE__) . 'css/registries-export.css' ); // external css
+    $mpdf->WriteHTML($stylesheet,1);
 
     $mpdf->WriteHTML($html);
 
