@@ -1032,3 +1032,80 @@ function baptism_registers_pdfs_page() {
   </div>
   <?php
 }
+
+/**
+ * Generate a single certificate with the passed values
+ */
+add_action( 'admin_post_test_certificate', 'placita_generate_certificate' );
+function placita_generate_certificate() {
+    // Verify nonce / admin referer
+    // check_admin_referer( 'placita_generate_certificate' );
+
+    // Verifiy we have a date
+    // if ( !isset($_REQUEST['export_date']) ) wp_die('Please set a valid date');
+
+    // $export_date = sanitize_text_field($_REQUEST['export_date']);
+    // $date = date_create_from_format('Y/m/d H:i', $export_date);
+
+    require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
+
+    // global $wpdb;
+
+    // $table_name = $wpdb->prefix . 'baptism_registers';
+
+    // $results = $wpdb->get_results(
+    //     sprintf(
+    //         "SELECT first_name, middle_name, last_name, benches
+    //         FROM %s
+    //         WHERE baptism_date = '$export_date'
+    //         AND is_canceled = 0",
+    //         $table_name
+    //     ),
+    //     ARRAY_A
+    // );
+
+    $child_name = "Emilio Venegas";
+
+    $father_fn = "René";
+    $father_ln = "Venegas";
+    $mother_fn = "Mayra";
+    $parents_name = "$father_fn and $mother_fn $father_ln";
+    
+    $birthplace = "Querétaro";
+    $month = "Apr.";
+    $day = "02";
+    $year = "1998";
+    
+    $bapt_month = "Sept.";
+    $bapt_day = "21";
+    $bapt_year = "2018";
+    
+    $priest_name = "John Crow";
+    
+    $godfather_fn = "Miguel";
+    $godfather_ln = "Martínez";
+    $godmother_fn = "Lucy";
+    $godparents_name = "$godfather_fn and $godmother_fn $godfather_ln";
+
+    $html = "<div id='bg'></div>";
+    $html .= "<div id='child_name'>$child_name</div>";
+    $html .= "<div id='parents_name'>$parents_name</div>";
+    $html .= "<div id='birthplace'>$birthplace</div>";
+    $html .= "<div id='month'>$month</div>";
+    $html .= "<div id='day'>$day</div>";
+    $html .= "<div id='year'>$year</div>";
+    $html .= "<div id='bapt_month'>$bapt_month</div>";
+    $html .= "<div id='bapt_day'>$bapt_day</div>";
+    $html .= "<div id='bapt_year'>$bapt_year</div>";
+    $html .= "<div id='priest_name'>$priest_name</div>";
+    $html .= "<div id='godparents_name'>$godparents_name</div>";
+
+    $mpdf = new mPDF('', 'Letter', 0, 'Times', 0, 0, 0, 0);
+
+    $stylesheet = file_get_contents( plugin_dir_path(__FILE__) . 'css/certificate.css' ); // external css
+    $mpdf->WriteHTML($stylesheet,1);
+
+    $mpdf->WriteHTML($html);
+
+    $mpdf->Output( 'Test.pdf', 'I' );
+}
