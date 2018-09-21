@@ -1083,7 +1083,7 @@ function placita_generate_certificate() {
     $priest_name = "John Crow";
     
     $godfather_fn = "Miguel";
-    $godfather_ln = "Martínez";
+    $godfather_ln = "Venegas";
     $godmother_fn = "Lucy";
     $godparents_name = "$godfather_fn and $godmother_fn $godfather_ln";
 
