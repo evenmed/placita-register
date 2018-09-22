@@ -10,7 +10,7 @@ License: GPL2
 */
 
 global $placita_db_version, $bench_numbers;
-$placita_db_version = '1.10';
+$placita_db_version = '1.11';
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','D18','D19','D20','D21','D22','D23','D24','D25','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17','E18','E19','E20','E21','E22','E23','E24','E25');
 
 // #TODO: make this into an object with properties etc for cleaner code.
@@ -76,7 +76,7 @@ function placita_install_db() {
             is_noshow tinyint(1) DEFAULT 0 NOT NULL,
             is_private tinyint(1) DEFAULT 0 NOT NULL,
             date timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            lastedited timestamp ON UPDATE CURRENT_TIMESTAMP,
+            lastedited timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
@@ -87,6 +87,15 @@ function placita_install_db() {
         
     }
 }
+
+// Update db if necessary
+function placita_update_db_check() {
+    global $placita_db_version;
+    if ( get_site_option( 'placita_db_version' ) != $placita_db_version ) {
+        placita_install_db();
+    }
+}
+add_action( 'plugins_loaded', 'placita_update_db_check' );
 
 // Plugin activation scripts
 function placita_activation() {
@@ -145,15 +154,6 @@ function placita_baptism_manager_login_redirect( $redirect_to, $request, $user )
     }
 }
 add_filter( 'login_redirect', 'placita_baptism_manager_login_redirect', 10, 3 );
-
-// Update db if necessary
-function placita_update_db_check() {
-    global $placita_db_version;
-    if ( get_site_option( 'placita_db_version' ) != $placita_db_version ) {
-        placita_install_db();
-    }
-}
-add_action( 'plugins_loaded', 'placita_update_db_check' );
 
 require_once "classes/class.templater.php";
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
@@ -247,6 +247,9 @@ function placita_handle_baptism_register_form() {
 
     //Sanitize everything and put it into our $values array
     $values = sanitize_registry_data();
+
+    // Add current timestamp
+    $values['date'] = date('Y-m-d G:i:s');
 
     // Generate the pdf with the sanitized values
     $pdf = placita_generate_pdf($values, false);
@@ -381,6 +384,8 @@ function placita_generate_pdf($values, $inline = false) {
      <br/>
      <br/>
  
+     <h3>Date Submitted</h3>
+     <div>{$values['date']}</div>
      <h3>Notes</h3>
      <div>{$values['note']}</div>
  
@@ -879,9 +884,6 @@ function placita_baptism_register_view_pdf() {
     $values = $results[0];
 
     placita_generate_pdf($values, true);
-
-    // wp_redirect( plugin_dir_url(__FILE__) . 'pdfs/' . rawurlencode($registry['file']) );
-    // exit;
 
 }
 add_action( 'admin_post_baptism_register_view_pdf', 'placita_baptism_register_view_pdf' );
