@@ -134,7 +134,7 @@
                     if ( field === 'baptism_date' ) {
 
                         $('.input_benches[data-registry='+ registry +']').val('')
-                            .find('option').each( function() { $(this).prop('disabled', false) } )
+                            .find('option').each( function() { $(this).prop('disabled', false) } ).end()
                             .prevAll('.value-label').text('').end();
 
                         if ( r.unavailable_benches ) {

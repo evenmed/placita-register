@@ -652,7 +652,8 @@ function placita_update_registry() {
                 );
                 if ( count($results) > 0 ) {
                     foreach ( $results as $r ) {
-                        $unavailable_benches[] = $r['benches'];
+                        if ( $r['benches'] )
+                            $unavailable_benches[] = $r['benches'];
                     }
                 }
                 if ( count($unavailable_benches) > 0 )
