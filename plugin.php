@@ -640,14 +640,16 @@ function placita_update_registry() {
                         FROM %s
                         WHERE baptism_date = '$dbVal'
                         AND id != $registry
-                        AND is_canceled = 0",
+                        AND is_canceled = 0
+                        AND is_noshow = 0",
                         $table_name
                     ),
                     ARRAY_A
                 );
                 if ( count($results) > 0 ) {
                     foreach ( $results as $r ) {
-                        $unavailable_benches[] = $r['benches'];
+                        if ($r['benches'])
+                            $unavailable_benches[] = $r['benches'];
                     }
                 }
                 if ( count($unavailable_benches) > 0 )
@@ -833,6 +835,7 @@ function placita_is_bench_available( $id, $bench ) {
             WHERE benches = '$bench'
             AND baptism_date = '$datetime'
             AND is_canceled = 0
+            AND is_noshow = 0
             AND id != $id
             LIMIT 1",
             $table_name
@@ -932,7 +935,8 @@ function placita_export_registries() {
     check_admin_referer( 'placita_export_registries' );
 
     // Verifiy we have a date
-    if ( !isset($_REQUEST['export_date']) ) wp_die('Please set a valid date');
+    if ( !isset($_REQUEST['export_date']) || !$_REQUEST['export_date'] )
+        wp_die('Please set a valid date');
 
     $export_date = sanitize_text_field($_REQUEST['export_date']);
     $date = date_create_from_format('Y/m/d H:i', $export_date);
@@ -948,7 +952,8 @@ function placita_export_registries() {
             "SELECT first_name, middle_name, last_name, benches
             FROM %s
             WHERE baptism_date = '$export_date'
-            AND is_canceled = 0",
+            AND is_canceled = 0
+            AND is_noshow = 0",
             $table_name
         ),
         ARRAY_A
@@ -1036,76 +1041,109 @@ function baptism_registers_pdfs_page() {
 /**
  * Generate a single certificate with the passed values
  */
-add_action( 'admin_post_test_certificate', 'placita_generate_certificate' );
+add_action( 'admin_post_print_certificates', 'placita_generate_certificate' );
 function placita_generate_certificate() {
     // Verify nonce / admin referer
-    // check_admin_referer( 'placita_generate_certificate' );
+    check_admin_referer( 'placita_print_certificates' );
 
     // Verifiy we have a date
-    // if ( !isset($_REQUEST['export_date']) ) wp_die('Please set a valid date');
+    if ( !isset($_REQUEST['certificates_date']) || !$_REQUEST['certificates_date'] )
+        wp_die('Please set a valid date');
 
-    // $export_date = sanitize_text_field($_REQUEST['export_date']);
-    // $date = date_create_from_format('Y/m/d H:i', $export_date);
+    $export_date = sanitize_text_field($_REQUEST['certificates_date']);
+    $date = date_create_from_format('Y/m/d H:i', $export_date);
 
     require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
 
-    // global $wpdb;
+    global $wpdb;
 
-    // $table_name = $wpdb->prefix . 'baptism_registers';
+    $table_name = $wpdb->prefix . 'baptism_registers';
 
-    // $results = $wpdb->get_results(
-    //     sprintf(
-    //         "SELECT first_name, middle_name, last_name, benches
-    //         FROM %s
-    //         WHERE baptism_date = '$export_date'
-    //         AND is_canceled = 0",
-    //         $table_name
-    //     ),
-    //     ARRAY_A
-    // );
-
-    $child_name = "Emilio Venegas";
-
-    $father_fn = "René";
-    $father_ln = "Venegas";
-    $mother_fn = "Mayra";
-    $parents_name = "$father_fn and $mother_fn $father_ln";
+    $results = $wpdb->get_results(
+        sprintf(
+            "SELECT
+                first_name, middle_name, last_name,
+                father_name, father_last,
+                mother_name, mother_last,
+                birthplace, birthdate,
+                baptism_date, priest,
+                godfather_name, godfather_last,
+                godmother_name, godmother_last
+            FROM %s
+            WHERE baptism_date = '$export_date'
+            AND is_canceled = 0
+            AND is_noshow = 0",
+            $table_name
+        ),
+        ARRAY_A
+    );
     
-    $birthplace = "Querétaro";
-    $month = "Apr.";
-    $day = "02";
-    $year = "1998";
-    
-    $bapt_month = "Sept.";
-    $bapt_day = "21";
-    $bapt_year = "2018";
-    
-    $priest_name = "John Crow";
-    
-    $godfather_fn = "Miguel";
-    $godfather_ln = "Venegas";
-    $godmother_fn = "Lucy";
-    $godparents_name = "$godfather_fn and $godmother_fn $godfather_ln";
-
-    $html = "<div id='bg'></div>";
-    $html .= "<div id='child_name'>$child_name</div>";
-    $html .= "<div id='parents_name'>$parents_name</div>";
-    $html .= "<div id='birthplace'>$birthplace</div>";
-    $html .= "<div id='month'>$month</div>";
-    $html .= "<div id='day'>$day</div>";
-    $html .= "<div id='year'>$year</div>";
-    $html .= "<div id='bapt_month'>$bapt_month</div>";
-    $html .= "<div id='bapt_day'>$bapt_day</div>";
-    $html .= "<div id='bapt_year'>$bapt_year</div>";
-    $html .= "<div id='priest_name'>$priest_name</div>";
-    $html .= "<div id='godparents_name'>$godparents_name</div>";
-
     $mpdf = new mPDF('', 'Letter', 0, 'Times', 0, 0, 0, 0);
-
     $stylesheet = file_get_contents( plugin_dir_path(__FILE__) . 'css/certificate.css' ); // external css
     $mpdf->WriteHTML($stylesheet,1);
 
-    $mpdf->WriteHTML($html);
+    foreach ( $results as $r ) {
+        $html = get_certificate_html($r);
+        $mpdf->AddPage();
+        $mpdf->WriteHTML($html);
+    }
+
+    $mpdf->SetJS('this.print();');
 
     $mpdf->Output( 'Test.pdf', 'I' );
+}
+
+/**
+ * Get the HTML for printing a certificate
+ * 
+ * @param array $args - array of values to use in the certificate
+ */
+function get_certificate_html( $args ) {
+    $first_name  = $args['first_name'];
+    $middle_name = $args['middle_name'] ? ' ' . $args['middle_name'] : '';
+    $last_name   = ' ' . $args['last_name'];
+    $child_name  = "$first_name $middle_name $last_name";
+
+    $father_fn = $args['father_name'];
+    $father_ln = $args['father_last'];
+    $mother_fn = $args['mother_name'];
+    $father_ln = $args['mother_last'];
+    $parents_name = "$father_fn $father_ln & $mother_fn $mother_ln";
+    
+    $birthplace = $args['birthplace'];
+
+    if ( $birthdate = date_create_from_format('Y-m-d', $args['birthdate']) ) {
+        $month = $birthdate->format('M');
+        $day   = $birthdate->format('d');
+        $year  = $birthdate->format('Y');
+    }
+    
+    if ( $bapt_date = date_create_from_format('Y-m-d H:i:s', $args['baptism_date']) ) {
+        $bapt_month = $bapt_date->format('M');
+        $bapt_day   = $bapt_date->format('d');
+        $bapt_year  = $bapt_date->format('Y');
+    }
+    
+    $priest_name = $args['priest'];
+    
+    $godfather_fn = $args['godfather_name'];
+    $godfather_ln = $args['godfather_last'];
+    $godmother_fn = $args['godmother_name'];
+    $godmother_ln = $args['godmother_last'];
+    $godparents_name = "$godfather_fn $godfather_ln & $godmother_fn $godmother_ln";
+
+    $html = "<div id='bg'></div>";
+    $html .= $child_name ? "<div id='child_name'>$child_name</div>" : "";
+    $html .= $parents_name ? "<div id='parents_name'>$parents_name</div>" : "";
+    $html .= $birthplace ? "<div id='birthplace'>$birthplace</div>" : "";
+    $html .= $month ? "<div id='month'>$month</div>" : "";
+    $html .= $day ? "<div id='day'>$day</div>" : "";
+    $html .= $year ? "<div id='year'>$year</div>" : "";
+    $html .= $bapt_month ? "<div id='bapt_month'>$bapt_month</div>" : "";
+    $html .= $bapt_day ? "<div id='bapt_day'>$bapt_day</div>" : "";
+    $html .= $bapt_year ? "<div id='bapt_year'>$bapt_year</div>" : "";
+    $html .= $priest_name ? "<div id='priest_name'>$priest_name</div>" : "";
+    $html .= $godparents_name ? "<div id='godparents_name'>$godparents_name</div>" : "";
+
+    return $html;
 }
