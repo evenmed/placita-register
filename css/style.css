@@ -17,6 +17,9 @@ img.banner + .banner-divider {
   background: black;
   border-bottom: 2px solid #f79421;
 }
+#register-form * {
+  text-transform: uppercase;
+}
 .nav > li {
   display: inline-block;
 }

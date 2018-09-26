@@ -6,7 +6,7 @@
         </div>
         <div class="col-xs-12">
             <!-- multistep form -->
-            <form novalidate name="register-form" id="register-form" method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" class="form multistep-form col-xs-12">
+            <form autocomplete="off" novalidate name="register-form" id="register-form" method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" class="form multistep-form col-xs-12">
                 <input type="hidden" name="register-form" value="1" />
                 <input type="hidden" name="thankyou-page" value="<?php echo $redirect ? '1' : '0'; ?>" />
                 <input type="hidden" name="action" value="baptism_register_form">
