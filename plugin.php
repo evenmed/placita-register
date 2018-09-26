@@ -1050,11 +1050,12 @@ function placita_generate_certificate() {
     check_admin_referer( 'placita_print_certificates' );
 
     // Verifiy we have a date
-    if ( !isset($_REQUEST['certificates_date']) || !$_REQUEST['certificates_date'] )
+    if (
+        !isset($_REQUEST['certificates_date']) ||
+        !( $date = date_create_from_format('m/d/Y H:i', $_REQUEST['certificates_date']) )
+        )
         wp_die('Please set a valid date');
 
-    $export_date = sanitize_text_field($_REQUEST['certificates_date']);
-    $date = date_create_from_format('m/d/Y H:i', $export_date);
     $formatted_date = $date->format('Y/m/d H:i');
 
     require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
@@ -1081,6 +1082,10 @@ function placita_generate_certificate() {
         ),
         ARRAY_A
     );
+
+    if ( empty($results) ) {
+        wp_die('There are no registries for the set date (' . $date->format('m/d/Y H:i') . ')');
+    }
     
     $mpdf = new mPDF('', 'Letter', 0, 'Times', 0, 0, 0, 0);
     $stylesheet = file_get_contents( plugin_dir_path(__FILE__) . 'css/certificate.css' ); // external css
