@@ -1107,7 +1107,7 @@ function get_certificate_html( $args ) {
     $father_fn = $args['father_name'];
     $father_ln = $args['father_last'];
     $mother_fn = $args['mother_name'];
-    $father_ln = $args['mother_last'];
+    $mother_ln = $args['mother_last'];
     $parents_name = "$father_fn $father_ln & $mother_fn $mother_ln";
     
     $birthplace = $args['birthplace'];
@@ -1132,6 +1132,8 @@ function get_certificate_html( $args ) {
     $godmother_ln = $args['godmother_last'];
     $godparents_name = "$godfather_fn $godfather_ln & $godmother_fn $godmother_ln";
 
+    $signature_url = plugin_dir_url( __FILE__ ) . 'media/images/firma_padre.png';
+
     $html = "<div id='bg'></div>";
     $html .= $child_name ? "<div id='child_name'>$child_name</div>" : "";
     $html .= $parents_name ? "<div id='parents_name'>$parents_name</div>" : "";
@@ -1144,6 +1146,7 @@ function get_certificate_html( $args ) {
     $html .= $bapt_year ? "<div id='bapt_year'>$bapt_year</div>" : "";
     $html .= $priest_name ? "<div id='priest_name'>$priest_name</div>" : "";
     $html .= $godparents_name ? "<div id='godparents_name'>$godparents_name</div>" : "";
+    $html .= "<div id='signature'><img class='singature_img' src='$signature_url' /></div>";
 
     return $html;
 }
