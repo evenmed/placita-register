@@ -31,7 +31,7 @@ $testListTable->prepare_items();
         }
         ?>
 
-        <form action="admin-post.php" target="_blank" id="registries_export" method="post">
+        <form autocomplete="off" action="admin-post.php" target="_blank" id="registries_export" method="post">
             <h3>Generate Sitting Chart</h3>
             <input type="hidden" name="action" value="export_registries">
             <?php wp_nonce_field('placita_export_registries'); ?>
@@ -39,7 +39,7 @@ $testListTable->prepare_items();
             <button type="submit"class="button-primary">Generate</button>
         </form>
 
-        <form action="admin-post.php" target="_blank" id="print_certificates" method="post">
+        <form autocomplete="off" action="admin-post.php" target="_blank" id="print_certificates" method="post">
             <h3>Print Certificates</h3>
             <input type="hidden" name="action" value="print_certificates">
             <?php wp_nonce_field('placita_print_certificates'); ?>

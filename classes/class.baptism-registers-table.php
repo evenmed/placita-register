@@ -163,7 +163,7 @@ class Baptism_Registers_Table extends WP_List_Table {
 
             case 'birthdate':
                 $date = date_create_from_format('Y-m-d', $item[ $column_name ]);
-                $value = $date ? htmlentities($date->format('Y/m/d')) : '';
+                $value = $date ? htmlentities($date->format('m/d/Y')) : '';
                 return '<span class="value-label">' . $value . '</span>' .
                 ' <a href="#" class="edit-registry-field">' . 
                     __('Edit', 'laplacita') .
@@ -193,7 +193,7 @@ class Baptism_Registers_Table extends WP_List_Table {
 
             case 'baptism_date':
                 $date = date_create_from_format('Y-m-d H:i:s', $item[ $column_name ]);
-                $value = $date ? htmlentities($date->format('Y/m/d H:i')) : '';
+                $value = $date ? htmlentities($date->format('m/d/Y H:i')) : '';
                 return '<span class="value-label">' . $value . '</span>' .
                 ' <a href="#" class="edit-registry-field">' . 
                     __('Edit', 'laplacita') .

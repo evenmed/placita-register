@@ -542,7 +542,7 @@ function placita_update_registry() {
             break;
 
         case 'baptism_date':
-            $date = date_create_from_format('Y/m/d H:i', $v);
+            $date = date_create_from_format('m/d/Y H:i', $v);
             $value = $date->format("Y-m-d H:i:s");
             if ( !$value ) {
                 wp_send_json( array(
@@ -558,7 +558,7 @@ function placita_update_registry() {
             break;
 
         case 'birthdate':
-            $date = date_create_from_format('Y/m/d', $v);
+            $date = date_create_from_format('m/d/Y', $v);
             $value = $date->format("Y-m-d");
             if ( !$value ) {
                 wp_send_json( array(
@@ -614,7 +614,7 @@ function placita_update_registry() {
         array( 'ID' => $registry ), 
         $format, 
         array( '%d' ) 
-    )) {
+    )) { // If the row was updated correctly
         // Get the value from the db to display it exactly as it was saved
         $results = $wpdb->get_results(
             sprintf(
@@ -631,7 +631,7 @@ function placita_update_registry() {
         switch ($field) {
             case 'baptism_date':
                 $date = date_create_from_format('Y-m-d H:i:s', $dbVal);
-                $value = $date ? $date->format('Y/m/d H:i') : '';
+                $value = $date ? $date->format('m/d/Y H:i') : '';
 
                 // Get the benches that are already occupied at the baptism's datetime
                 global $wpdb;
@@ -662,7 +662,7 @@ function placita_update_registry() {
                 break;
             case 'birthdate':
                 $date = date_create_from_format('Y-m-d', $dbVal);
-                $value = $date ? $date->format('Y/m/d') : '';
+                $value = $date ? $date->format('m/d/Y') : '';
                 break;
             case 'benches':
                 if ($previous_bench)
@@ -941,7 +941,8 @@ function placita_export_registries() {
         wp_die('Please set a valid date');
 
     $export_date = sanitize_text_field($_REQUEST['export_date']);
-    $date = date_create_from_format('Y/m/d H:i', $export_date);
+    $date = date_create_from_format('m/d/Y H:i', $export_date);
+    $formatted_date = $date->format('Y/m/d H:i');
 
     require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
 
@@ -953,7 +954,7 @@ function placita_export_registries() {
         sprintf(
             "SELECT first_name, middle_name, last_name, benches
             FROM %s
-            WHERE baptism_date = '$export_date'
+            WHERE baptism_date = '$formatted_date'
             AND is_canceled = 0
             AND is_noshow = 0",
             $table_name
@@ -1053,7 +1054,8 @@ function placita_generate_certificate() {
         wp_die('Please set a valid date');
 
     $export_date = sanitize_text_field($_REQUEST['certificates_date']);
-    $date = date_create_from_format('Y/m/d H:i', $export_date);
+    $date = date_create_from_format('m/d/Y H:i', $export_date);
+    $formatted_date = $date->format('Y/m/d H:i');
 
     require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
 
@@ -1072,7 +1074,7 @@ function placita_generate_certificate() {
                 godfather_name, godfather_last,
                 godmother_name, godmother_last
             FROM %s
-            WHERE baptism_date = '$export_date'
+            WHERE baptism_date = '$formatted_date'
             AND is_canceled = 0
             AND is_noshow = 0",
             $table_name

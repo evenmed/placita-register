@@ -10,7 +10,7 @@
     $(".registries_export_date, .print_certificates_date").datetimepicker({
         disabledWeekDays: [1, 2, 3, 4],
         allowTimes:['7:30', '9:30', '11:30', '13:15', '13:30', '15:15'],
-        format: 'Y/m/d H:i',
+        format: 'm/d/Y H:i',
         scrollMonth: false,
         scrollTime: false,
         scrollInput: false,
@@ -43,7 +43,7 @@
     $(".input_baptism_date").datetimepicker({
         disabledWeekDays: [1, 2, 3, 4],
         allowTimes:['7:30', '9:30', '11:30', '13:15', '13:30', '15:15'],
-        format: 'Y/m/d H:i',
+        format: 'm/d/Y H:i',
         scrollMonth: false,
         scrollTime: false,
         scrollInput: false,
@@ -75,7 +75,7 @@
 
     // Birth date datepicker
     $(".input_birthdate").datetimepicker({
-        format: 'Y/m/d',
+        format: 'm/d/Y',
         timepicker: false,
         onSelectDate: function(ct, $this) {
             $this.blur();
