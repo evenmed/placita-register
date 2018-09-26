@@ -7,7 +7,7 @@
     })
 
     // Registries export datetimepicker
-    $(".registries_export_date").datetimepicker({
+    $(".registries_export_date, .print_certificates_date").datetimepicker({
         disabledWeekDays: [1, 2, 3, 4],
         allowTimes:['7:30', '9:30', '11:30', '13:15', '13:30', '15:15'],
         format: 'Y/m/d H:i',

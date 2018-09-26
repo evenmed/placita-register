@@ -35,8 +35,16 @@ $testListTable->prepare_items();
             <h3>Generate Sitting Chart</h3>
             <input type="hidden" name="action" value="export_registries">
             <?php wp_nonce_field('placita_export_registries'); ?>
-            <span>Date:</span><input type="text" class="registries_export_date" name="export_date">
+            <span>Date:</span><input type="text" required class="registries_export_date" name="export_date">
             <button type="submit"class="button-primary">Generate</button>
+        </form>
+
+        <form action="admin-post.php" target="_blank" id="print_certificates" method="post">
+            <h3>Print Certificates</h3>
+            <input type="hidden" name="action" value="print_certificates">
+            <?php wp_nonce_field('placita_print_certificates'); ?>
+            <span>Date:</span><input type="text" required class="print_certificates_date" name="certificates_date">
+            <button type="submit"class="button-primary">Print</button>
         </form>
 
         <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
