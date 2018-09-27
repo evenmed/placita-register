@@ -3,7 +3,7 @@
 Plugin Name: La Placita Register
 Plugin URI: http://laplacita.church/
 Description: Plugin to create and handle the Baptism Pre-Register form
-Version: 3.3
+Version: 3.5
 Author: Emilio Venegas
 Author URI: http://www.emiliovenegas.me
 License: GPL2
