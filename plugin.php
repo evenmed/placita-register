@@ -408,6 +408,10 @@ PDF;
      require_once plugin_dir_path(__FILE__) . 'vendor/mPDF/vendor/autoload.php';
      $mpdf = new mPDF('', 'Letter');
      $mpdf->SetTitle( $title );
+
+     $stylesheet = file_get_contents( plugin_dir_path(__FILE__) . 'css/all_caps_pdf.css' ); // external css
+     $mpdf->WriteHTML($stylesheet,1);
+
      $mpdf->WriteHTML($html);
 
      if ( $inline ) {
@@ -1009,6 +1013,9 @@ function placita_export_registries() {
 
     $stylesheet = file_get_contents( plugin_dir_path(__FILE__) . 'css/registries-export.css' ); // external css
     $mpdf->WriteHTML($stylesheet,1);
+
+    $caps_stylesheet = file_get_contents( plugin_dir_path(__FILE__) . 'css/all_caps_pdf.css' ); // external css
+    $mpdf->WriteHTML($caps_stylesheet,1);
 
     $mpdf->WriteHTML($html);
 

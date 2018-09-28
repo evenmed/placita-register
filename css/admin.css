@@ -13,6 +13,9 @@ body {
 .edit-registry-field.show-input ~ .registry-update {
   display: block;
 }
+#baptism-preregisters-wrap {
+  text-transform: uppercase;
+}
 #single-registry-form fieldset {
   padding: 20px;
   margin: 20px 0;

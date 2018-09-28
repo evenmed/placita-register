@@ -6,7 +6,7 @@ $testListTable = new Baptism_Registers_Table();
 $testListTable->prepare_items();
 
 ?>
-    <div class="wrap">
+    <div class="wrap" id="baptism-preregisters-wrap">
 
         <h2>Baptism Pre-registers</h2>
         <img width=200 src="<?php echo plugin_dir_url(__FILE__) . '../media/images/outline-logo-b.png' ?>" />
