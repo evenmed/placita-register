@@ -6,6 +6,8 @@ Description: Plugin to create and handle the Baptism Pre-Register form
 Version: 3.5
 Author: Emilio Venegas
 Author URI: http://www.emiliovenegas.me
+Text Domain: laplacita
+Domain Path: /languages
 License: GPL2
 */
 
@@ -88,14 +90,23 @@ function placita_install_db() {
     }
 }
 
-// Update db if necessary
-function placita_update_db_check() {
+/**
+ * plugins_loaded actions
+ * Action 1: Update the db if necessary
+ * Action 2: Load text domain
+ */
+function placita_plugins_loaded() {
+
+    // Update db if necessary
     global $placita_db_version;
     if ( get_site_option( 'placita_db_version' ) != $placita_db_version ) {
         placita_install_db();
     }
+
+    // Load plugin text domain
+    load_plugin_textdomain( 'placita-register', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
 }
-add_action( 'plugins_loaded', 'placita_update_db_check' );
+add_action( 'plugins_loaded', 'placita_plugins_loaded' );
 
 // Plugin activation scripts
 function placita_activation() {
