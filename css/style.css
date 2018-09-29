@@ -93,6 +93,10 @@ img.banner + .banner-divider {
   padding: 2px 5px;
   font-weight: 300;
 }
+.btn-orange {
+  border-color: #f79421;
+  color: #f79421;
+}
 .btn-block {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -324,6 +328,24 @@ img.banner + .banner-divider {
 
 /* Register child form
 ******************************/
+#placita_before_form_widgets_wrap .wpml-ls-item {
+  border: 2px solid #f79421;
+  margin-left: 10px;
+}
+#placita_before_form_widgets_wrap .wpml-ls-item:first-child {
+  margin-left: 0;
+}
+#placita_before_form_widgets_wrap .wpml-ls-item * {
+  color: #f79421;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+#placita_before_form_widgets_wrap .wpml-ls-current-language {
+  background: #f79421;
+}
+#placita_before_form_widgets_wrap .wpml-ls-current-language * {
+  color: white;
+}
 #register_form-wrap {
   display: flex;
   align-items: center;

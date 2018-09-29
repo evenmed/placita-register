@@ -4,6 +4,14 @@
             <img class="logo" src="<?php echo plugin_dir_url(__FILE__); ?>../media/images/outline-logo-b.png" />
             <div class="outline-text"><?php _e( "Baptism Pre-register", 'laplacita' ); ?></div>
         </div>
+
+        <!-- Language switcher -->
+        <div id="language-switcher-wrap" class="col-xs-12">
+            <?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('placita_before_form') ) : 
+ 
+            endif; ?>
+        </div>
+
         <div class="col-xs-12">
             <!-- multistep form -->
             <form autocomplete="off" novalidate name="register-form" id="register-form" method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" class="form multistep-form col-xs-12">

@@ -107,6 +107,19 @@ function placita_plugins_loaded() {
 }
 add_action( 'plugins_loaded', 'placita_plugins_loaded' );
 
+/**
+ * Register custom widget area for form language switcher
+ */
+function placita_widgets_init() {
+    register_sidebar( array(
+        'name' => __( 'Before Baptism Register Form', 'laplacita' ),
+        'id' => 'placita_before_form',
+        'before_widget' => '<div id="placita_before_form_widgets_wrap">',
+        'after_widget' => '</div>'
+    ) );
+}
+add_action( 'widgets_init', 'placita_widgets_init' );
+
 // Plugin activation scripts
 function placita_activation() {
     placita_install_db();
