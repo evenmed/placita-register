@@ -7,7 +7,6 @@ Version: 3.5
 Author: Emilio Venegas
 Author URI: http://www.emiliovenegas.me
 Text Domain: laplacita
-Domain Path: /languages
 License: GPL2
 */
 
@@ -104,7 +103,7 @@ function placita_plugins_loaded() {
     }
 
     // Load plugin text domain
-    load_plugin_textdomain( 'placita-register', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+    load_plugin_textdomain( 'laplacita', FALSE, basename( dirname( __FILE__ ) ) . '/languages' );
 }
 add_action( 'plugins_loaded', 'placita_plugins_loaded' );
 

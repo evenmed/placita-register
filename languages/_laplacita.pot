@@ -1,0 +1,320 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: La Placita Register\n"
+"POT-Creation-Date: 2018-09-29 13:09-0500\n"
+"PO-Revision-Date: 2018-09-29 13:07-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.1.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: plugin.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: admin_pages/single-baptism-register.php:19
+msgid "Edit Baptism Registry"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:41 views/register.php:30
+msgid "First Name"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:42 views/register.php:41
+msgid "Last Name"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:43
+msgid "Priest"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:44
+msgid "Baptism Date"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:45
+msgid "Birth Date"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:46
+msgid "Payment Collected"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:47
+msgid "Benches"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:48
+msgid "Flags"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:59 views/register.php:157
+msgid "Father's Phone"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:60 views/register.php:193
+msgid "Mother's Phone"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:61
+msgid "Registry Date"
+msgstr ""
+
+#: classes/class.baptism-registers-table.php:169
+#: classes/class.baptism-registers-table.php:183
+#: classes/class.baptism-registers-table.php:199
+#: classes/class.baptism-registers-table.php:213
+#: classes/class.baptism-registers-table.php:261
+msgid "Edit"
+msgstr ""
+
+#: plugin.php:117
+msgid "Baptism Registry Manager"
+msgstr ""
+
+#: plugin.php:539
+msgid "An error ocurred, please refresh the page and try again"
+msgstr ""
+
+#: plugin.php:565 plugin.php:581
+msgid "Please enter the date in a valid format"
+msgstr ""
+
+#: plugin.php:600
+msgid "That bench is not available at that time"
+msgstr ""
+
+#: plugin.php:608
+msgid "Please choose a valid bench number"
+msgstr ""
+
+#: plugin.php:697
+msgid "Saved!"
+msgstr ""
+
+#: plugin.php:705
+msgid ""
+"An error ocurred while updating the registry. Please refresh the page and "
+"try again."
+msgstr ""
+
+#: views/register.php:5
+msgid "Baptism Pre-register"
+msgstr ""
+
+#: views/register.php:16 views/register.php:24
+msgid "Child"
+msgstr ""
+
+#: views/register.php:17 views/register.php:81
+msgid "Parents"
+msgstr ""
+
+#: views/register.php:18 views/register.php:227
+msgid "Godparents"
+msgstr ""
+
+#: views/register.php:19 views/register.php:317
+msgid "Finish"
+msgstr ""
+
+#: views/register.php:25
+msgid "Enter the child's info"
+msgstr ""
+
+#: views/register.php:34
+msgid "Middle Name"
+msgstr ""
+
+#: views/register.php:45
+msgid "Birthdate"
+msgstr ""
+
+#: views/register.php:52
+msgid "Birthplace"
+msgstr ""
+
+#: views/register.php:58
+msgid "Boy"
+msgstr ""
+
+#: views/register.php:62
+msgid "Girl"
+msgstr ""
+
+#: views/register.php:71 views/register.php:219 views/register.php:309
+msgid "Next"
+msgstr ""
+
+#: views/register.php:82
+msgid "Enter the parents' info"
+msgstr ""
+
+#: views/register.php:88
+msgid "Main Phone"
+msgstr ""
+
+#: views/register.php:93
+msgid "Contact Email"
+msgstr ""
+
+#: views/register.php:102
+msgid "Street Address"
+msgstr ""
+
+#: views/register.php:107
+msgid "City"
+msgstr ""
+
+#: views/register.php:116
+msgid "State"
+msgstr ""
+
+#: views/register.php:121
+msgid "Zip Code"
+msgstr ""
+
+#: views/register.php:129
+msgid "Father"
+msgstr ""
+
+#: views/register.php:135
+msgid "Father's First Name"
+msgstr ""
+
+#: views/register.php:139
+msgid "Father's Middle Name"
+msgstr ""
+
+#: views/register.php:146
+msgid "Father's Last Name"
+msgstr ""
+
+#: views/register.php:150
+msgid "Father's Email"
+msgstr ""
+
+#: views/register.php:165
+msgid "Mother"
+msgstr ""
+
+#: views/register.php:171
+msgid "Mother's First Name"
+msgstr ""
+
+#: views/register.php:175
+msgid "Mother's Middle Name"
+msgstr ""
+
+#: views/register.php:182
+msgid "Mother's Last Name"
+msgstr ""
+
+#: views/register.php:186
+msgid "Mother's Email"
+msgstr ""
+
+#: views/register.php:200
+msgid "Mother's Married Last Name"
+msgstr ""
+
+#: views/register.php:205
+msgid "Birth Certificate"
+msgstr ""
+
+#: views/register.php:215 views/register.php:305 views/register.php:332
+msgid "Previous"
+msgstr ""
+
+#: views/register.php:228
+msgid "Enter the godparents' info"
+msgstr ""
+
+#: views/register.php:233
+msgid "Godfather"
+msgstr ""
+
+#: views/register.php:239
+msgid "Godather's First Name"
+msgstr ""
+
+#: views/register.php:243
+msgid "Godather's Middle Name"
+msgstr ""
+
+#: views/register.php:250
+msgid "Godather's Last Name"
+msgstr ""
+
+#: views/register.php:254
+msgid "Godfather's Email"
+msgstr ""
+
+#: views/register.php:261
+msgid "Godfather's Phone"
+msgstr ""
+
+#: views/register.php:268
+msgid "Godmother"
+msgstr ""
+
+#: views/register.php:274
+msgid "Godmother's First Name"
+msgstr ""
+
+#: views/register.php:278
+msgid "Godmother's Middle Name"
+msgstr ""
+
+#: views/register.php:285
+msgid "Godmother's Last Name"
+msgstr ""
+
+#: views/register.php:289
+msgid "Godmother's Email"
+msgstr ""
+
+#: views/register.php:296
+msgid "Godmother's Phone"
+msgstr ""
+
+#: views/register.php:318
+msgid "Finish up and submit"
+msgstr ""
+
+#: views/register.php:323
+msgid "Notes"
+msgstr ""
+
+#: views/register.php:336
+msgid "Submit"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "La Placita Register"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://laplacita.church/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Plugin to create and handle the Baptism Pre-Register form"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Emilio Venegas"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.emiliovenegas.me"
+msgstr ""
