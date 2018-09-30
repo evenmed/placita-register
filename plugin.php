@@ -331,6 +331,10 @@ function placita_generate_pdf($values, $inline = false) {
     // Function to print checkboxes as 'Yes'/'No'
     $checkbox = function ($cb) { return $cb ? 'Yes' : 'No'; };
 
+    // Convert dates to mm/dd/yyyy
+    $birthdate = date_create_from_format( 'Y-m-d', $values['birthdate'] )->format('m/d/Y');
+    $date = date_create_from_format( 'Y-m-d H:i:s', $values['date'] )->format('m/d/Y g:i a');
+
      // PDF structure
      $html = <<<PDF
      <h1>La Placita Baptism Pre-Register</h1>
@@ -344,7 +348,7 @@ function placita_generate_pdf($values, $inline = false) {
      </section>
      <section style="width:50%; float:left;">
      <div><strong>Sex:</strong> {$values['gender']}</div>
-     <div><strong>Birthdate:</strong> {$values['birthdate']}</div>
+     <div><strong>Birthdate:</strong> {$birthdate}</div>
      <div><strong>Birthplace:</strong> {$values['birthplace']}</div>
      </section>
  
@@ -408,7 +412,7 @@ function placita_generate_pdf($values, $inline = false) {
      <br/>
  
      <h3>Date Submitted</h3>
-     <div>{$values['date']}</div>
+     <div>{$date}</div>
      <h3>Notes</h3>
      <div>{$values['note']}</div>
  
