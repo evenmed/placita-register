@@ -329,7 +329,7 @@ img.banner + .banner-divider {
 /* Register child form
 ******************************/
 #placita_before_form_widgets_wrap .wpml-ls-item {
-  border: 2px solid #f79421;
+  border: 1px solid #f79421;
   margin-left: 10px;
 }
 #placita_before_form_widgets_wrap .wpml-ls-item:first-child {
