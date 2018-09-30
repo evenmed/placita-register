@@ -272,7 +272,7 @@ function placita_handle_baptism_register_form() {
     $values = sanitize_registry_data();
 
     // Add current timestamp
-    $values['date'] = date('Y-m-d G:i:s');
+    $values['date'] = current_time('Y-m-d G:i:s');
 
     // Generate the pdf with the sanitized values
     $pdf = placita_generate_pdf($values, false);
@@ -332,89 +332,118 @@ function placita_generate_pdf($values, $inline = false) {
     $checkbox = function ($cb) { return $cb ? 'Yes' : 'No'; };
 
     // Convert dates to mm/dd/yyyy
-    $birthdate = date_create_from_format( 'Y-m-d', $values['birthdate'] )->format('m/d/Y');
-    $date = date_create_from_format( 'Y-m-d H:i:s', $values['date'] )->format('m/d/Y g:i a');
+    $baptism_date = date_create_from_format( 'Y-m-d H:i:s', $values['baptism_date'] );
+    $baptism_date = $baptism_date ? $baptism_date->format('m/d/Y g:i a') : 'Not set';
 
-     // PDF structure
-     $html = <<<PDF
-     <h1>La Placita Baptism Pre-Register</h1>
- 
-     <h2 style="margin-bottom:0;">Child's Info</h2>
-     <hr />
-     <section style="width:50%; float:left;">
-     <div><strong>First Name:</strong> {$values['first_name']}</div>
-     <div><strong>Middle Name:</strong> {$values['middle_name']}</div>
-     <div><strong>Last Name:</strong> {$values['last_name']}</div>
-     </section>
-     <section style="width:50%; float:left;">
-     <div><strong>Sex:</strong> {$values['gender']}</div>
-     <div><strong>Birthdate:</strong> {$birthdate}</div>
-     <div><strong>Birthplace:</strong> {$values['birthplace']}</div>
-     </section>
- 
- 
-     <h2 style="margin-bottom:0;">Parent's Info</h2>
-     <hr />
-     <section style="width:50%; float:left;">
-     <div><strong>Street Address:</strong> {$values['address']}</div>
-     <div><strong>Main Phone:</strong> {$values['main_phone']}</div>
-     <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
-     </section>
-     <section style="width:50%; float:left;">
-     <div><strong>City:</strong> {$values['city']}</div>
-     <div><strong>State:</strong> {$values['state']}</div>
-     <div><strong>Zip Code:</strong> {$values['zip']}</div>
-     </section>
- 
-     <section style="width:50%; float:left;">
-     <h3>Father</h3>
-     <div><strong>First Name:</strong> {$values['father_name']}</div>
-     <div><strong>Middle Name:</strong> {$values['father_middle']}</div>
-     <div><strong>Last Name:</strong> {$values['father_last']}</div>
-     <div><strong>Email:</strong> {$values['father_email']}</div>
-     <div><strong>Phone:</strong> {$values['father_phone']}</div>
-     </section>
- 
-     <section style="width:50%; float:left;">
-     <h3>Mother</h3>
-     <div><strong>First Name:</strong> {$values['mother_name']}</div>
-     <div><strong>Middle Name:</strong> {$values['mother_middle']}</div>
-     <div><strong>Last Name:</strong> {$values['mother_last']}</div>
-     <div><strong>Email:</strong> {$values['mother_email']}</div>
-     <div><strong>Phone:</strong> {$values['mother_phone']}</div>
-     <div><strong>Married Last Name:</strong> {$values['mother_married_name']}</div>
-     <div><strong>Birth Certificate:</strong> {$checkbox($values['mmn_birth_certificate'])}</div>
-     </section>
- 
- 
-     <h2 style="margin-bottom:0;">Godparent's Info</h2>
-     <hr />
- 
-     <section style="width:50%; float:left;">
-     <h3>Godfather</h3>
-     <div><strong>First Name:</strong> {$values['godfather_name']}</div>
-     <div><strong>Middle Name:</strong> {$values['godfather_middle']}</div>
-     <div><strong>Last Name:</strong> {$values['godfather_last']}</div>
-     <div><strong>Email:</strong> {$values['godfather_email']}</div>
-     <div><strong>Phone:</strong> {$values['godfather_phone']}</div>
-     </section>
- 
-     <section style="width:50%; float:left;">
-     <h3>Godmother</h3>
-     <div><strong>First Name:</strong> {$values['godmother_name']}</div>
-     <div><strong>Middle Name:</strong> {$values['godmother_middle']}</div>
-     <div><strong>Last Name:</strong> {$values['godmother_last']}</div>
-     <div><strong>Email:</strong> {$values['godmother_email']}</div>
-     <div><strong>Phone:</strong> {$values['godmother_phone']}</div>
-     </section>
- 
-     <br/>
-     <br/>
- 
-     <h3>Date Submitted</h3>
-     <div>{$date}</div>
-     <h3>Notes</h3>
-     <div>{$values['note']}</div>
+    $birthdate = date_create_from_format( 'Y-m-d', $values['birthdate'] );
+    $birthdate = $birthdate ? $birthdate->format('m/d/Y') : 'Not set';
+
+    $date_submitted = date_create_from_format( 'Y-m-d H:i:s', $values['date'] );
+    $date_submitted = $date_submitted ? $date_submitted->format('m/d/Y g:i a') : 'Not set';
+
+    $printed_date = current_time('m/d/Y g:i a');
+
+    // Prevent warnings from bench no.
+    global $bench_numbers;
+    $benches = in_array( $values['benches'], $bench_numbers ) ? $values['benches'] : 'Not set';
+
+    // PDF structure
+    $html = <<<PDF
+    <h1>La Placita Baptism Pre-Register</h1>
+
+    <section style="width:50%; float:left;">
+        <h3>Baptism Date</h3>
+        <div>{$baptism_date}</div>
+    </section>
+    <section style="width:50%; float:left;">
+        <h3>Bench No.</h3>
+        <div>{$benches}</div>
+    </section>
+
+    <h2 style="margin-bottom:0;">Child's Info</h2>
+    <hr />
+
+    <section style="width:50%; float:left;">
+        <div><strong>First Name:</strong> {$values['first_name']}</div>
+        <div><strong>Middle Name:</strong> {$values['middle_name']}</div>
+        <div><strong>Last Name:</strong> {$values['last_name']}</div>
+    </section>
+
+    <section style="width:50%; float:left;">
+        <div><strong>Sex:</strong> {$values['gender']}</div>
+        <div><strong>Birthdate:</strong> {$birthdate}</div>
+        <div><strong>Birthplace:</strong> {$values['birthplace']}</div>
+    </section>
+
+
+    <h2 style="margin-bottom:0;">Parent's Info</h2>
+    <hr />
+
+    <section style="width:50%; float:left;">
+        <div><strong>Street Address:</strong> {$values['address']}</div>
+        <div><strong>Main Phone:</strong> {$values['main_phone']}</div>
+        <div><strong>Contact Email:</strong> {$values['contact_email']}</div>
+    </section>
+
+    <section style="width:50%; float:left;">
+        <div><strong>City:</strong> {$values['city']}</div>
+        <div><strong>State:</strong> {$values['state']}</div>
+        <div><strong>Zip Code:</strong> {$values['zip']}</div>
+    </section>
+
+    <section style="width:50%; float:left;">
+        <h3>Father</h3>
+        <div><strong>First Name:</strong> {$values['father_name']}</div>
+        <div><strong>Middle Name:</strong> {$values['father_middle']}</div>
+        <div><strong>Last Name:</strong> {$values['father_last']}</div>
+        <div><strong>Email:</strong> {$values['father_email']}</div>
+        <div><strong>Phone:</strong> {$values['father_phone']}</div>
+    </section>
+
+    <section style="width:50%; float:left;">
+        <h3>Mother</h3>
+        <div><strong>First Name:</strong> {$values['mother_name']}</div>
+        <div><strong>Middle Name:</strong> {$values['mother_middle']}</div>
+        <div><strong>Last Name:</strong> {$values['mother_last']}</div>
+        <div><strong>Email:</strong> {$values['mother_email']}</div>
+        <div><strong>Phone:</strong> {$values['mother_phone']}</div>
+        <div><strong>Married Last Name:</strong> {$values['mother_married_name']}</div>
+        <div><strong>Birth Certificate:</strong> {$checkbox($values['mmn_birth_certificate'])}</div>
+    </section>
+
+
+    <h2 style="margin-bottom:0;">Godparent's Info</h2>
+    <hr />
+
+    <section style="width:50%; float:left;">
+        <h3>Godfather</h3>
+        <div><strong>First Name:</strong> {$values['godfather_name']}</div>
+        <div><strong>Middle Name:</strong> {$values['godfather_middle']}</div>
+        <div><strong>Last Name:</strong> {$values['godfather_last']}</div>
+        <div><strong>Email:</strong> {$values['godfather_email']}</div>
+        <div><strong>Phone:</strong> {$values['godfather_phone']}</div>
+    </section>
+
+    <section style="width:50%; float:left;">
+        <h3>Godmother</h3>
+        <div><strong>First Name:</strong> {$values['godmother_name']}</div>
+        <div><strong>Middle Name:</strong> {$values['godmother_middle']}</div>
+        <div><strong>Last Name:</strong> {$values['godmother_last']}</div>
+        <div><strong>Email:</strong> {$values['godmother_email']}</div>
+        <div><strong>Phone:</strong> {$values['godmother_phone']}</div>
+    </section>
+
+    <br/>
+    <br/>
+
+    <section style="width:50%; float:left;">
+        <h3>Date Printed</h3>
+        <div>{$printed_date}</div>
+    </section>
+    <section style="width:50%; float:left;">
+        <h3>Date Submitted</h3>
+        <div>{$date_submitted}</div>
+    </section>
  
 PDF;
    
