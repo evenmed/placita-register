@@ -322,28 +322,49 @@
 
                 <fieldset>
 
-                    <h2 class="fs-title"><?php _e( "Finish", 'laplacita' ); ?></h2>
-                    <h3 class="fs-subtitle"><?php _e( "Finish up and submit", 'laplacita' ); ?></h3>
+                  <h2 class="fs-title"><?php _e( "Finish", 'laplacita' ); ?></h2>
+                  <h3 class="fs-subtitle"><?php _e( "Finish up and submit", 'laplacita' ); ?></h3>
+
+                  <section>
+                    <div class="row">
+                      <h2 class="fs-title"><?php _e( "Baptism Date", 'laplacita' ); ?></h2>
+                    </div>
 
                     <div class="row">
-                      <div class="form-group col-xs-12">
+                      <div class="form-group col-sm-6 col-sm-offset-3">
+                        <input required type="text"
+                        value="<?php
+                          $baptism_date = date_create_from_format('Y-m-d H:i:s', $child[ 'baptism_date' ]);
+                          echo $baptism_date ? htmlentities($baptism_date->format('m/d/Y H:i')) : '';
+                        ?>"
+                        class="form-control datetime baptism_date" name="baptism_date"
+                        placeholder="<?php _e( "Baptism date", 'laplacita'); ?>" />
+                      </div>
+                    </div>
+
+                  </section>
+
+                  <section>
+                    <div class="row">
+                      <div class="form-group col-sm-6 col-sm-offset-3">
                         <textarea class="form-control" name="note"
                         placeholder="<?php _e("Notes", 'laplacita' ); ?>"
                         ><?php echo $child['note'] ? $child['note'] : "" ?></textarea>
                       </div>
                     </div>
+                  </section>
 
 
-                    <div class="row">
-                      <div class="form-group col-xs-6">
-                        <input type="button" name="previous" class="previous action-button"
-                        value="<?php _e( "Previous", 'laplacita' ); ?>" />
-                      </div>
-                      <div class="form-group col-xs-6">
-                        <input type="submit" name="register-submit" class="submit action-button"
-                        value="<?php _e( "Submit", 'laplacita' ); ?>" />
-                      </div>
+                  <div class="row">
+                    <div class="form-group col-xs-6">
+                      <input type="button" name="previous" class="previous action-button"
+                      value="<?php _e( "Previous", 'laplacita' ); ?>" />
                     </div>
+                    <div class="form-group col-xs-6">
+                      <input type="submit" name="register-submit" class="submit action-button"
+                      value="<?php _e( "Submit", 'laplacita' ); ?>" />
+                    </div>
+                  </div>
 
                 </fieldset>
 

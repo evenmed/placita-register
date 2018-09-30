@@ -12,6 +12,38 @@
   $(".birthdate").datepicker("option", "maxDate", "+0");
   $(".birthdate").datepicker("option", "defaultDate", "-2m");
 
+  $(".baptism_date").datetimepicker({
+    disabledWeekDays: [1, 2, 3, 4],
+    allowTimes: ["7:30", "9:30", "11:30", "13:15", "13:30", "15:15"],
+    format: "m/d/Y H:i",
+    minDate: 0,
+    maxDate: '+1971/01/01',
+    inline: true,
+    scrollMonth: false,
+    scrollTime: false,
+    scrollInput: false,
+    onSelectDate: function(ct, $this) {
+      const day = ct.getDay();
+      const times = [];
+      switch (day) {
+        case 0: // Sunday
+          times.push("9:30", "11:30", "13:30");
+          break;
+        case 5: // Friday
+          times.push("13:30");
+          break;
+        case 6: // Saturday
+          times.push("7:30", "9:30", "11:30", "13:15", "15:15");
+          break;
+      }
+
+      $this.datetimepicker("setOptions", { allowTimes: times });
+    },
+    onSelectTime: function(ct, $this) {
+      $this.blur();
+    }
+  });
+
   $.each($(".chosen-select"), function(k, v) {
     $(this).on("chosen:ready", function() {
       if ($(this).val() != null) {

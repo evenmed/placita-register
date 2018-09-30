@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: La Placita Register\n"
-"POT-Creation-Date: 2018-09-29 13:09-0500\n"
+"POT-Creation-Date: 2018-09-29 21:24-0500\n"
 "PO-Revision-Date: 2018-09-29 13:07-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,8 +16,8 @@ msgstr ""
 "X-Poedit-WPHeader: plugin.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
@@ -25,11 +25,11 @@ msgstr ""
 msgid "Edit Baptism Registry"
 msgstr ""
 
-#: classes/class.baptism-registers-table.php:41 views/register.php:30
+#: classes/class.baptism-registers-table.php:41 views/register.php:38
 msgid "First Name"
 msgstr ""
 
-#: classes/class.baptism-registers-table.php:42 views/register.php:41
+#: classes/class.baptism-registers-table.php:42 views/register.php:49
 msgid "Last Name"
 msgstr ""
 
@@ -57,11 +57,11 @@ msgstr ""
 msgid "Flags"
 msgstr ""
 
-#: classes/class.baptism-registers-table.php:59 views/register.php:157
+#: classes/class.baptism-registers-table.php:59 views/register.php:165
 msgid "Father's Phone"
 msgstr ""
 
-#: classes/class.baptism-registers-table.php:60 views/register.php:193
+#: classes/class.baptism-registers-table.php:60 views/register.php:201
 msgid "Mother's Phone"
 msgstr ""
 
@@ -77,31 +77,35 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: plugin.php:117
+#: plugin.php:115
+msgid "Before Baptism Register Form"
+msgstr ""
+
+#: plugin.php:129
 msgid "Baptism Registry Manager"
 msgstr ""
 
-#: plugin.php:539
+#: plugin.php:584
 msgid "An error ocurred, please refresh the page and try again"
 msgstr ""
 
-#: plugin.php:565 plugin.php:581
+#: plugin.php:610 plugin.php:626
 msgid "Please enter the date in a valid format"
 msgstr ""
 
-#: plugin.php:600
+#: plugin.php:645
 msgid "That bench is not available at that time"
 msgstr ""
 
-#: plugin.php:608
+#: plugin.php:653
 msgid "Please choose a valid bench number"
 msgstr ""
 
-#: plugin.php:697
+#: plugin.php:742
 msgid "Saved!"
 msgstr ""
 
-#: plugin.php:705
+#: plugin.php:750
 msgid ""
 "An error ocurred while updating the registry. Please refresh the page and "
 "try again."
@@ -111,191 +115,195 @@ msgstr ""
 msgid "Baptism Pre-register"
 msgstr ""
 
-#: views/register.php:16 views/register.php:24
+#: views/register.php:24 views/register.php:32
 msgid "Child"
 msgstr ""
 
-#: views/register.php:17 views/register.php:81
+#: views/register.php:25 views/register.php:89
 msgid "Parents"
 msgstr ""
 
-#: views/register.php:18 views/register.php:227
+#: views/register.php:26 views/register.php:235
 msgid "Godparents"
 msgstr ""
 
-#: views/register.php:19 views/register.php:317
+#: views/register.php:27 views/register.php:325
 msgid "Finish"
 msgstr ""
 
-#: views/register.php:25
+#: views/register.php:33
 msgid "Enter the child's info"
 msgstr ""
 
-#: views/register.php:34
+#: views/register.php:42
 msgid "Middle Name"
 msgstr ""
 
-#: views/register.php:45
+#: views/register.php:53
 msgid "Birthdate"
 msgstr ""
 
-#: views/register.php:52
+#: views/register.php:60
 msgid "Birthplace"
 msgstr ""
 
-#: views/register.php:58
+#: views/register.php:66
 msgid "Boy"
 msgstr ""
 
-#: views/register.php:62
+#: views/register.php:70
 msgid "Girl"
 msgstr ""
 
-#: views/register.php:71 views/register.php:219 views/register.php:309
+#: views/register.php:79 views/register.php:227 views/register.php:317
 msgid "Next"
 msgstr ""
 
-#: views/register.php:82
+#: views/register.php:90
 msgid "Enter the parents' info"
 msgstr ""
 
-#: views/register.php:88
+#: views/register.php:96
 msgid "Main Phone"
 msgstr ""
 
-#: views/register.php:93
+#: views/register.php:101
 msgid "Contact Email"
 msgstr ""
 
-#: views/register.php:102
+#: views/register.php:110
 msgid "Street Address"
 msgstr ""
 
-#: views/register.php:107
+#: views/register.php:115
 msgid "City"
 msgstr ""
 
-#: views/register.php:116
+#: views/register.php:124
 msgid "State"
 msgstr ""
 
-#: views/register.php:121
+#: views/register.php:129
 msgid "Zip Code"
 msgstr ""
 
-#: views/register.php:129
+#: views/register.php:137
 msgid "Father"
 msgstr ""
 
-#: views/register.php:135
+#: views/register.php:143
 msgid "Father's First Name"
 msgstr ""
 
-#: views/register.php:139
+#: views/register.php:147
 msgid "Father's Middle Name"
 msgstr ""
 
-#: views/register.php:146
+#: views/register.php:154
 msgid "Father's Last Name"
 msgstr ""
 
-#: views/register.php:150
+#: views/register.php:158
 msgid "Father's Email"
 msgstr ""
 
-#: views/register.php:165
+#: views/register.php:173
 msgid "Mother"
 msgstr ""
 
-#: views/register.php:171
+#: views/register.php:179
 msgid "Mother's First Name"
 msgstr ""
 
-#: views/register.php:175
+#: views/register.php:183
 msgid "Mother's Middle Name"
 msgstr ""
 
-#: views/register.php:182
+#: views/register.php:190
 msgid "Mother's Last Name"
 msgstr ""
 
-#: views/register.php:186
+#: views/register.php:194
 msgid "Mother's Email"
 msgstr ""
 
-#: views/register.php:200
+#: views/register.php:208
 msgid "Mother's Married Last Name"
 msgstr ""
 
-#: views/register.php:205
+#: views/register.php:213
 msgid "Birth Certificate"
 msgstr ""
 
-#: views/register.php:215 views/register.php:305 views/register.php:332
+#: views/register.php:223 views/register.php:313 views/register.php:352
 msgid "Previous"
 msgstr ""
 
-#: views/register.php:228
+#: views/register.php:236
 msgid "Enter the godparents' info"
 msgstr ""
 
-#: views/register.php:233
+#: views/register.php:241
 msgid "Godfather"
 msgstr ""
 
-#: views/register.php:239
+#: views/register.php:247
 msgid "Godather's First Name"
 msgstr ""
 
-#: views/register.php:243
+#: views/register.php:251
 msgid "Godather's Middle Name"
 msgstr ""
 
-#: views/register.php:250
+#: views/register.php:258
 msgid "Godather's Last Name"
 msgstr ""
 
-#: views/register.php:254
+#: views/register.php:262
 msgid "Godfather's Email"
 msgstr ""
 
-#: views/register.php:261
+#: views/register.php:269
 msgid "Godfather's Phone"
 msgstr ""
 
-#: views/register.php:268
+#: views/register.php:276
 msgid "Godmother"
 msgstr ""
 
-#: views/register.php:274
+#: views/register.php:282
 msgid "Godmother's First Name"
 msgstr ""
 
-#: views/register.php:278
+#: views/register.php:286
 msgid "Godmother's Middle Name"
 msgstr ""
 
-#: views/register.php:285
+#: views/register.php:293
 msgid "Godmother's Last Name"
 msgstr ""
 
-#: views/register.php:289
+#: views/register.php:297
 msgid "Godmother's Email"
 msgstr ""
 
-#: views/register.php:296
+#: views/register.php:304
 msgid "Godmother's Phone"
 msgstr ""
 
-#: views/register.php:318
+#: views/register.php:326
 msgid "Finish up and submit"
 msgstr ""
 
-#: views/register.php:323
+#: views/register.php:336
+msgid "Baptism date"
+msgstr ""
+
+#: views/register.php:343
 msgid "Notes"
 msgstr ""
 
-#: views/register.php:336
+#: views/register.php:356
 msgid "Submit"
 msgstr ""
 
