@@ -10,9 +10,10 @@ Text Domain: laplacita
 License: GPL2
 */
 
-global $placita_db_version, $bench_numbers;
+global $placita_db_version, $bench_numbers, $per_hour_limit;
 $placita_db_version = '1.11';
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','D18','D19','D20','D21','D22','D23','D24','D25','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17','E18','E19','E20','E21','E22','E23','E24','E25');
+$per_hour_limit = 5;
 
 // #TODO: make this into an object with properties etc for cleaner code.
 // $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'main_phone', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'note', 'bautismal_code');
@@ -216,7 +217,39 @@ function placita_scripts() {
         wp_register_script('multisptep-form', plugin_dir_url( __FILE__ ) . 'js/multistep-form.js', array('jquery', 'jquery-ui'),'', true);
         wp_enqueue_script('multisptep-form');
 
+
         wp_register_script('placita-scripts', plugin_dir_url( __FILE__ ) . 'js/scripts.js', array('jquery', 'jquery-ui', 'datetimepicker'),'', true);
+
+        // Pass available baptism dates to our placita-scripts
+        global $wpdb, $per_hour_limit;
+        $table_name = $wpdb->prefix . 'baptism_registers';
+        $results = $wpdb->get_results("
+            SELECT baptism_date bd, COUNT(*) c
+            FROM $table_name
+            WHERE baptism_date >= CURDATE()
+            GROUP BY bd
+            HAVING c >= $per_hour_limit
+        "); // This returns a list of baptism_dates that have been used more than $per_hour_limit times
+        
+        // Convert each baptism_date into an array containing year, month, day, hour, and minute
+        $unavailable_dates = array();
+        foreach( $results as $k => $r ) {
+            if ( $date = date_create_from_format('Y-m-d H:i:s', $r->bd) ) {
+                $unavailable_dates[] = [
+                    'year'   => $date->format('Y'),
+                    'month'  => $date->format('n'),
+                    'day'    => $date->format('j'),
+                    'hour'   => $date->format('G'),
+                    'minute' => $date->format('i'),
+                    'count'  => $r->c
+                ];
+            }
+        }
+
+        // Localize the script (pass our data)
+        wp_localize_script( 'placita-scripts', 'unavailable_dates', $unavailable_dates );
+
+        // Once localized, we enqueue the script
         wp_enqueue_script('placita-scripts');
     }
 }
