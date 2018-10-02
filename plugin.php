@@ -10,10 +10,23 @@ Text Domain: laplacita
 License: GPL2
 */
 
-global $placita_db_version, $bench_numbers, $per_hour_limit;
+global $placita_db_version, $bench_numbers, $per_hour_limit, $baptism_times;
+
 $placita_db_version = '1.11';
+
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','D18','D19','D20','D21','D22','D23','D24','D25','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17','E18','E19','E20','E21','E22','E23','E24','E25');
-$per_hour_limit = 5;
+
+$per_hour_limit = 65;
+
+$baptism_times = array(
+    0 => array("9:30", "11:30", "13:30"), // Sunday
+    1 => array(), // Monday
+    2 => array(), // Tuesday
+    3 => array(), // Wednesday
+    4 => array(), // Thursday
+    5 => array("13:30"), // Friday
+    6 => array("7:30", "9:30", "11:30", "13:15", "15:15"), // Saturday
+);
 
 // #TODO: make this into an object with properties etc for cleaner code.
 // $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'main_phone', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'note', 'bautismal_code');
@@ -109,7 +122,7 @@ function placita_plugins_loaded() {
 add_action( 'plugins_loaded', 'placita_plugins_loaded' );
 
 /**
- * Register custom widget area for form language switcher
+ * Register custom widget area for our form language switcher
  */
 function placita_widgets_init() {
     register_sidebar( array(
@@ -136,24 +149,22 @@ function placita_activation() {
 }
 register_activation_hook( __FILE__, 'placita_activation' );
 
-function wporg_simple_role_caps()
-{
+function wporg_simple_role_caps() {
     // gets the baptism_registry_manager role object
     $role = get_role('baptism_registry_manager');
     if ($role)
         $role->add_cap('manage_baptism', true);
 
-    // gets the baptism_registry_manager role object
+    // gets the administrator role object
     $role = get_role('administrator');
     if ($role)
         $role->add_cap('manage_baptism', true);
 }
- 
-// add simple_role capabilities, priority must be after the initial role definition
+// priority must be after the initial role definition
 add_action('init', 'wporg_simple_role_caps', 11);
 
 // Baptism Registry Manager limitations
-function plaita_baptism_manager_hide_the_dashboard() {
+function placita_baptism_manager_hide_the_dashboard() {
     global $current_user;
     // is there a user ?
     if ( is_array( $current_user->roles ) ) {
@@ -164,7 +175,7 @@ function plaita_baptism_manager_hide_the_dashboard() {
         }
     }
 }
-add_action( 'admin_menu', 'plaita_baptism_manager_hide_the_dashboard' );
+add_action( 'admin_menu', 'placita_baptism_manager_hide_the_dashboard' );
 
 function placita_baptism_manager_login_redirect( $redirect_to, $request, $user ){
     // is there a user ?
@@ -229,7 +240,7 @@ function placita_scripts() {
             WHERE baptism_date >= CURDATE()
             GROUP BY bd
             HAVING c >= $per_hour_limit
-        "); // This returns a list of baptism_dates that have been used more than $per_hour_limit times
+        "); // This returns a list of baptism_dates that have been used $per_hour_limit times or more
         
         // Convert each baptism_date into an array containing year, month, day, hour, and minute
         $unavailable_dates = array();
@@ -246,8 +257,13 @@ function placita_scripts() {
             }
         }
 
+        $server_data = array(
+            'unavailable_dates' => $unavailable_dates,
+            'locale' => get_locale()
+        );
+
         // Localize the script (pass our data)
-        wp_localize_script( 'placita-scripts', 'unavailable_dates', $unavailable_dates );
+        wp_localize_script( 'placita-scripts', 'server_data', $server_data );
 
         // Once localized, we enqueue the script
         wp_enqueue_script('placita-scripts');
@@ -307,6 +323,9 @@ function register_page( $redirect = true ){
     require_once("views/register.php");
 }
 
+/**
+ * Handle the frontend register form submission
+ */
 function placita_handle_baptism_register_form() {
 
     $checkbox = function ($cb) { return $cb ? 'Yes' : 'No'; };
@@ -317,11 +336,15 @@ function placita_handle_baptism_register_form() {
     // Add current timestamp
     $values['date'] = current_time('Y-m-d G:i:s');
 
+    // Validate baptism date
+    $values['baptism_date'] = validate_baptism_date( $values['baptism_date'] );
+
     // Generate the pdf with the sanitized values
     $pdf = placita_generate_pdf($values, false);
 
     $file = $pdf['file'];
 
+    // Send an email and then delete the file
     if ( file_exists( $file ) ) {
         wp_mail(array("baptism@laplacitachurch.org"), "La Placita Baptism Pre-register", "Attached you will find the PDF file with the pre-register info.", array(), $file);
         if ( is_writable($file) )
@@ -525,6 +548,28 @@ PDF;
         );
      }
 
+}
+
+/**
+ * Validate a baptism_date to make sure it's valid
+ * 
+ * @param string $date_string - date in format 'Y-m-d H:i:s'
+ * @return string If it's valid, it'll return the same value. Otherwise it returns an empty string
+ */
+function validate_baptism_date($date_string) {
+    if ( $date = date_create_from_format( 'Y-m-d H:i:s', $date_string ) ) {
+        global $baptism_times;
+        $weekday = $date->format('w');
+        $hour    = $date->format('G');
+        $minute  = $date->format('i');
+
+        $time_string = "$hour:$minute";
+
+        if ( in_array($time_string, $baptism_times[$weekday]) ) {
+            return $date_string;
+        }
+    }
+    return '';
 }
 
 /**
@@ -893,6 +938,8 @@ function sanitize_registry_data() {
     // $values['godmother_catholic'] = isset($_POST['godmother_catholic']) ? 
     //     1 : 0;
 
+    $values['baptism_date'] = isset($_POST['baptism_date']) ? 
+        date( "Y-m-d H:i:s", strtotime( sanitize_text_field( $_POST['baptism_date'] ) ) ) : null;
     $values['note'] = isset($_POST['note']) ? 
         sanitize_text_field( $_POST['note'] ) : "";
     $values['bautismal_code'] = isset($_POST['bautismal_code']) ? 

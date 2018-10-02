@@ -12,20 +12,36 @@
   $(".birthdate").datepicker("option", "maxDate", "+0");
   $(".birthdate").datepicker("option", "defaultDate", "-2m");
 
+  $.datetimepicker.setLocale( server_data.locale.substr(0, 2) );
+
   $(".baptism_date").datetimepicker({
     disabledWeekDays: [1, 2, 3, 4],
     allowTimes: ["7:30", "9:30", "11:30", "13:15", "13:30", "15:15"],
     format: "m/d/Y H:i",
     minDate: 0,
-    maxDate: '+1971/01/01',
+    maxDate: "+01/01/1971",
+    formatDate: "m/d/Y",
     inline: true,
     scrollMonth: false,
     scrollTime: false,
     scrollInput: false,
     onSelectDate: function(ct, $this) {
-      const day = ct.getDay();
+      const year = ct.getFullYear();
+      const month = ct.getMonth() + 1; // +1 bc getMonth returns month no. from 0-11
+      const day = ct.getDate();
+      const weekday = ct.getDay();
       const times = [];
-      switch (day) {
+
+      // This will return an array of times in h:m format
+      const unavailable_times = server_data.unavailable_dates.filter( date => {
+        return (
+            date['year'] == year &&
+            date['month'] == month &&
+            date['day'] == day
+        )
+      } ).map( date => `${date['hour']}:${date['minute']}` );
+
+      switch (weekday) {
         case 0: // Sunday
           times.push("9:30", "11:30", "13:30");
           break;
@@ -37,7 +53,10 @@
           break;
       }
 
-      $this.datetimepicker("setOptions", { allowTimes: times });
+      // remove unavailable times
+      available_times = times.filter( time => unavailable_times.indexOf(time) == -1 );
+
+      $this.datetimepicker("setOptions", { allowTimes: available_times });
     },
     onSelectTime: function(ct, $this) {
       $this.blur();
