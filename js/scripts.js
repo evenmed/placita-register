@@ -1,5 +1,11 @@
 (function($) {
+
+  // Initiate datepicker
   $("input.date").datepicker();
+  $(".birthdate").datepicker("option", "maxDate", "+0");
+  $(".birthdate").datepicker("option", "defaultDate", "-2m");
+
+  // Remove errors on change
   $("form").on("change keyup paste", ".hasError", function() {
     if ($(this).attr("type") == "radio") {
       var name = $(this).attr("name");
@@ -9,11 +15,8 @@
     }
   });
 
-  $(".birthdate").datepicker("option", "maxDate", "+0");
-  $(".birthdate").datepicker("option", "defaultDate", "-2m");
-
-  $.datetimepicker.setLocale( server_data.locale.substr(0, 2) );
-
+  // Initiate datetimepicker
+  $.datetimepicker.setLocale( server_data.locale.substr(0, 2) ); // Set language
   $(".baptism_date").datetimepicker({
     disabledWeekDays: [1, 2, 3, 4],
     allowTimes: ["7:30", "9:30", "11:30", "13:15", "13:30", "15:15"],
@@ -26,20 +29,11 @@
     scrollTime: false,
     scrollInput: false,
     onSelectDate: function(ct, $this) {
-      const year = ct.getFullYear();
-      const month = ct.getMonth() + 1; // +1 bc getMonth returns month no. from 0-11
-      const day = ct.getDate();
       const weekday = ct.getDay();
       const times = [];
 
       // This will return an array of times in h:m format
-      const unavailable_times = server_data.unavailable_dates.filter( date => {
-        return (
-            date['year'] == year &&
-            date['month'] == month &&
-            date['day'] == day
-        )
-      } ).map( date => `${date['hour']}:${date['minute']}` );
+      const unavailable_times = getUnavailableTimesForDate(ct);
 
       switch (weekday) {
         case 0: // Sunday
@@ -53,7 +47,7 @@
           break;
       }
 
-      // remove unavailable times
+      // remove unavailable times (only keep the times that aren't in the unavailable_times array)
       available_times = times.filter( time => unavailable_times.indexOf(time) == -1 );
 
       $this.datetimepicker("setOptions", { allowTimes: available_times });
@@ -63,52 +57,45 @@
     }
   });
 
-  $.each($(".chosen-select"), function(k, v) {
-    $(this).on("chosen:ready", function() {
-      if ($(this).val() != null) {
-        var id = $(this).attr("id");
-        id = id.replace("-", "_") + "_chosen"; // form chosen select id
-        console.log(id);
-        $("#" + id)
-          .find(".chosen-single")
-          .css("color", "#fff");
+  // Validate baptism date before submitting
+  $('#register-form .submit').click( function(e) {
+    e.preventDefault();
+    const b_times = server_data.baptism_times;
+    const date    = $(".baptism_date").datetimepicker('getValue');
+    const weekday = date.getDay();
+    const hours   = date.getHours();
+    const minutes = date.getMinutes();
+    const time    = hours + ':' + minutes;
+    if ( b_times[weekday].indexOf(time) > -1 ) {
+
+      // It's a valid weekday / time, now make sure it's not part of the unavailable array
+
+      // This will return an array of times in h:m format
+      const unavailable_times = getUnavailableTimesForDate(date);
+
+      if ( unavailable_times.indexOf(time) == -1 ) {
+        $('#register-form').submit();
+        return true;
       }
-    });
-  });
-  $(".chosen-select").chosen({
-    width: "100%",
-    inherit_select_classes: true,
-    display_disabled_options: false
-  });
-  $(".chosen-select").on("change", function(evt, params) {
-    var id = $(this).attr("id");
-    id = id.replace("-", "_") + "_chosen"; // form chosen select id
-    $("#" + id)
-      .find(".chosen-single")
-      .css("color", "white");
-  });
-  $(".chosen-select").on("chosen:showing_dropdown", function(evt, params) {
-    var id = $(this).attr("id");
-    id = id.replace("-", "_") + "_chosen"; // form chosen select id
 
-    var $this = $("#" + id),
-      $wrap = $("#register_form-wrap"),
-      dropOffset =
-        $this.find(".chosen-drop").offset().top +
-        $this.find(".chosen-drop").outerHeight(),
-      wrapOffset = $wrap.offset().top + $wrap.outerHeight();
-
-    $this.find('.chosen-drop .chosen-search input[type="text"]').show();
-
-    if (dropOffset > wrapOffset) {
-      var overflow = dropOffset - wrapOffset;
-      $this.find(".chosen-results").css("max-height", 240 - overflow);
     }
+    markError( $(".baptism_date") );
   });
-  $(".chosen-select").on("chosen:hiding_dropdown", function(evt, params) {
-    var id = $(this).attr("id");
-    id = id.replace("-", "_") + "_chosen"; // form chosen select id
-    var $this = $("#" + id);
-    $this.find('.chosen-drop .chosen-search input[type="text"]').hide();
-  });
+
+  function getUnavailableTimesForDate( date ) {
+    const year    = date.getFullYear();
+    const month   = date.getMonth() + 1; // +1 bc getMonth returns month no. from 0-11
+    const day     = date.getDate();
+
+    // This will return an array of times in h:m format
+    return server_data.unavailable_dates.filter( datetime => {
+      return (
+          datetime['year'] == year &&
+          datetime['month'] == month &&
+          datetime['day'] == day
+      );
+    } ).map( datetime => `${datetime['hour']}:${datetime['minute']}` );
+
+  }
+
 })(jQuery);

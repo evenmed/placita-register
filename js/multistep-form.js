@@ -5,7 +5,7 @@ var animating; //flag to prevent quick multi-click glitches
 jQuery('#register-form').keypress( function(e) {
   e = e || event;
   return (e.keyCode || e.which || e.charCode || 0) !== 13;
-} )
+} );
 
 jQuery(".next").click(function() {
   if (animating) return false;

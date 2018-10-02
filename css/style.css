@@ -380,6 +380,12 @@ img.banner + .banner-divider {
 #register-form input.hasError {
   border-color: #e02d26;
 }
+#register-form input.datetime + .xdsoft_datetimepicker {
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+#register-form input.datetime.hasError + .xdsoft_datetimepicker {
+  border-color: #e02d26;
+}
 #register-form .form-control::-webkit-input-placeholder,
 #register-form .form-control:-moz-placeholder,
 #register-form .form-control::-moz-placeholder,

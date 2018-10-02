@@ -197,7 +197,6 @@ function placita_scripts() {
     if ( is_page_template( 'baptism-register.php' ) || is_page_template( 'baptism-register-no-redirect.php' )  ) {
         wp_enqueue_style( 'roboto-font', 'https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700' );
         wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . 'vendor/bootstrap/css/bootstrap.min.css' );
-        wp_enqueue_style( 'chosen', plugin_dir_url( __FILE__ ) . 'vendor/chosen/chosen.css' );
         wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'vendor/jquery-ui/jquery-ui.min.css' );
         wp_enqueue_style(
             'page-template',
@@ -222,9 +221,6 @@ function placita_scripts() {
         wp_register_script('bootstrap', plugin_dir_url( __FILE__ ) . 'vendor/bootstrap/js/bootstrap.min.js', array('jquery'),'', true);
         wp_enqueue_script('bootstrap');
 
-        wp_register_script('chosen', plugin_dir_url( __FILE__ ) . 'vendor/chosen/chosen.jquery.js', array('jquery'),'', true);
-        wp_enqueue_script('chosen');
-
         wp_register_script('multisptep-form', plugin_dir_url( __FILE__ ) . 'js/multistep-form.js', array('jquery', 'jquery-ui'),'', true);
         wp_enqueue_script('multisptep-form');
 
@@ -232,7 +228,7 @@ function placita_scripts() {
         wp_register_script('placita-scripts', plugin_dir_url( __FILE__ ) . 'js/scripts.js', array('jquery', 'jquery-ui', 'datetimepicker'),'', true);
 
         // Pass available baptism dates to our placita-scripts
-        global $wpdb, $per_hour_limit;
+        global $wpdb, $per_hour_limit, $baptism_times;
         $table_name = $wpdb->prefix . 'baptism_registers';
         $results = $wpdb->get_results("
             SELECT baptism_date bd, COUNT(*) c
@@ -259,6 +255,7 @@ function placita_scripts() {
 
         $server_data = array(
             'unavailable_dates' => $unavailable_dates,
+            'baptism_times' => $baptism_times,
             'locale' => get_locale()
         );
 
