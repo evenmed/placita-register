@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: La Placita Register\n"
-"POT-Creation-Date: 2018-09-29 21:24-0500\n"
-"PO-Revision-Date: 2018-09-29 21:24-0500\n"
+"POT-Creation-Date: 2018-10-03 11:42-0500\n"
+"PO-Revision-Date: 2018-10-03 11:42-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_MX\n"
@@ -25,11 +25,11 @@ msgstr ""
 msgid "Edit Baptism Registry"
 msgstr "Editar Registro de bautismo"
 
-#: classes/class.baptism-registers-table.php:41 views/register.php:38
+#: classes/class.baptism-registers-table.php:41 views/register.php:39
 msgid "First Name"
 msgstr "Primer nombre"
 
-#: classes/class.baptism-registers-table.php:42 views/register.php:49
+#: classes/class.baptism-registers-table.php:42 views/register.php:50
 msgid "Last Name"
 msgstr "Apellido"
 
@@ -37,7 +37,7 @@ msgstr "Apellido"
 msgid "Priest"
 msgstr "Sacerdote"
 
-#: classes/class.baptism-registers-table.php:44
+#: classes/class.baptism-registers-table.php:44 views/register.php:334
 msgid "Baptism Date"
 msgstr "Fecha de bautismo"
 
@@ -57,11 +57,11 @@ msgstr "Bancas"
 msgid "Flags"
 msgstr "Flags"
 
-#: classes/class.baptism-registers-table.php:59 views/register.php:165
+#: classes/class.baptism-registers-table.php:59 views/register.php:167
 msgid "Father's Phone"
 msgstr "Teléfono del padre"
 
-#: classes/class.baptism-registers-table.php:60 views/register.php:201
+#: classes/class.baptism-registers-table.php:60 views/register.php:203
 msgid "Mother's Phone"
 msgstr "Teléfono de la madre"
 
@@ -71,41 +71,41 @@ msgstr "Fecha de registro"
 
 #: classes/class.baptism-registers-table.php:169
 #: classes/class.baptism-registers-table.php:183
-#: classes/class.baptism-registers-table.php:199
-#: classes/class.baptism-registers-table.php:213
-#: classes/class.baptism-registers-table.php:261
+#: classes/class.baptism-registers-table.php:200
+#: classes/class.baptism-registers-table.php:221
+#: classes/class.baptism-registers-table.php:270
 msgid "Edit"
 msgstr "Editar"
 
-#: plugin.php:115
+#: plugin.php:129
 msgid "Before Baptism Register Form"
 msgstr "Antes del Formulario de Registro"
 
-#: plugin.php:129
+#: plugin.php:143
 msgid "Baptism Registry Manager"
 msgstr "Administrador del registro de bautismo"
 
-#: plugin.php:584
+#: plugin.php:670
 msgid "An error ocurred, please refresh the page and try again"
 msgstr "Ocurrió un error, por favor actualice la página e inténtelo de nuevo"
 
-#: plugin.php:610 plugin.php:626
+#: plugin.php:697 plugin.php:713
 msgid "Please enter the date in a valid format"
 msgstr "Por favor, introduzca la fecha en un formato válido"
 
-#: plugin.php:645
+#: plugin.php:732
 msgid "That bench is not available at that time"
 msgstr "Esa banca no está disponible en ese horario"
 
-#: plugin.php:653
+#: plugin.php:740
 msgid "Please choose a valid bench number"
 msgstr "Por favor elija un número de banca válido"
 
-#: plugin.php:742
+#: plugin.php:829
 msgid "Saved!"
 msgstr "¡Guardado!"
 
-#: plugin.php:750
+#: plugin.php:837
 msgid ""
 "An error ocurred while updating the registry. Please refresh the page and "
 "try again."
@@ -117,195 +117,206 @@ msgstr ""
 msgid "Baptism Pre-register"
 msgstr "Pre-registro de bautismo"
 
-#: views/register.php:24 views/register.php:32
+#: views/register.php:24 views/register.php:33
 msgid "Child"
 msgstr "Niño"
 
-#: views/register.php:25 views/register.php:89
+#: views/register.php:25 views/register.php:91
 msgid "Parents"
 msgstr "Padres"
 
-#: views/register.php:26 views/register.php:235
+#: views/register.php:26 views/register.php:238
 msgid "Godparents"
 msgstr "Padrinos"
 
-#: views/register.php:27 views/register.php:325
+#: views/register.php:27 views/register.php:329
 msgid "Finish"
 msgstr "Terminar"
 
-#: views/register.php:33
+#: views/register.php:34
 msgid "Enter the child's info"
 msgstr "Ingrese la información del niño"
 
-#: views/register.php:42
+#: views/register.php:43
 msgid "Middle Name"
 msgstr "Segundo Nombre"
 
-#: views/register.php:53
+#: views/register.php:54
 msgid "Birthdate"
 msgstr "Fecha de Nacimiento"
 
-#: views/register.php:60
-msgid "Birthplace"
-msgstr "Lugar de Nacimiento"
+#: views/register.php:61
+msgid "City & State of Birth"
+msgstr ""
 
-#: views/register.php:66
+#: views/register.php:67
 msgid "Boy"
 msgstr "Niño"
 
-#: views/register.php:70
+#: views/register.php:71
 msgid "Girl"
 msgstr "Niña"
 
-#: views/register.php:79 views/register.php:227 views/register.php:317
+#: views/register.php:80 views/register.php:229 views/register.php:320
 msgid "Next"
 msgstr "Siguiente"
 
-#: views/register.php:90
+#: views/register.php:92
 msgid "Enter the parents' info"
 msgstr "Ingrese la información de los padres"
 
-#: views/register.php:96
+#: views/register.php:98
 msgid "Main Phone"
 msgstr "Teléfono Principal"
 
-#: views/register.php:101
+#: views/register.php:103
 msgid "Contact Email"
 msgstr "Correo Electrónico de Contacto"
 
-#: views/register.php:110
+#: views/register.php:112
 msgid "Street Address"
 msgstr "Calle y Número"
 
-#: views/register.php:115
+#: views/register.php:117
 msgid "City"
 msgstr "Ciudad"
 
-#: views/register.php:124
+#: views/register.php:126
 msgid "State"
 msgstr "Estado"
 
-#: views/register.php:129
+#: views/register.php:131
 msgid "Zip Code"
 msgstr "Código Postal"
 
-#: views/register.php:137
+#: views/register.php:139
 msgid "Father"
 msgstr "Padre"
 
-#: views/register.php:143
+#: views/register.php:145
 msgid "Father's First Name"
 msgstr "Primer Nombre del Padre"
 
-#: views/register.php:147
+#: views/register.php:149
 msgid "Father's Middle Name"
 msgstr "Segundo Nombre del Padre"
 
-#: views/register.php:154
+#: views/register.php:156
 msgid "Father's Last Name"
 msgstr "Apellido del Padre"
 
-#: views/register.php:158
+#: views/register.php:160
 msgid "Father's Email"
 msgstr "Correo Electrónico del Padre"
 
-#: views/register.php:173
+#: views/register.php:175
 msgid "Mother"
 msgstr "Madre"
 
-#: views/register.php:179
+#: views/register.php:181
 msgid "Mother's First Name"
 msgstr "Primer Nombre de la Madre"
 
-#: views/register.php:183
+#: views/register.php:185
 msgid "Mother's Middle Name"
 msgstr "Segundo Nombre de la Madre"
 
-#: views/register.php:190
+#: views/register.php:192
 msgid "Mother's Last Name"
 msgstr "Apellido de la Madre"
 
-#: views/register.php:194
+#: views/register.php:196
 msgid "Mother's Email"
 msgstr "Correo Electrónico de la Madre"
 
-#: views/register.php:208
+#: views/register.php:210
 msgid "Mother's Married Last Name"
 msgstr "Apellido de Casada de la Madre"
 
-#: views/register.php:213
+#: views/register.php:215
 msgid "Birth Certificate"
 msgstr "Acta de Nacimiento"
 
-#: views/register.php:223 views/register.php:313 views/register.php:352
+#: views/register.php:225 views/register.php:316 views/register.php:367
 msgid "Previous"
 msgstr "Anterior"
 
-#: views/register.php:236
+#: views/register.php:239
 msgid "Enter the godparents' info"
 msgstr "Ingrese la información de los padrinos"
 
-#: views/register.php:241
+#: views/register.php:244
 msgid "Godfather"
 msgstr "Padrino"
 
-#: views/register.php:247
+#: views/register.php:250
 msgid "Godather's First Name"
 msgstr "Primer Nombre del Padrino"
 
-#: views/register.php:251
+#: views/register.php:254
 msgid "Godather's Middle Name"
 msgstr "Segundo Nombre del Padrino"
 
-#: views/register.php:258
+#: views/register.php:261
 msgid "Godather's Last Name"
 msgstr "Apellido del Padrino"
 
-#: views/register.php:262
+#: views/register.php:265
 msgid "Godfather's Email"
 msgstr "Correo Electrónico del Padrino"
 
-#: views/register.php:269
+#: views/register.php:272
 msgid "Godfather's Phone"
 msgstr "Teléfono del Padrino"
 
-#: views/register.php:276
+#: views/register.php:279
 msgid "Godmother"
 msgstr "Madrina"
 
-#: views/register.php:282
+#: views/register.php:285
 msgid "Godmother's First Name"
 msgstr "Primer Nombre de la Madrina"
 
-#: views/register.php:286
+#: views/register.php:289
 msgid "Godmother's Middle Name"
 msgstr "Segundo Nombre de la Madrina"
 
-#: views/register.php:293
+#: views/register.php:296
 msgid "Godmother's Last Name"
 msgstr "Apellido de la Madrina"
 
-#: views/register.php:297
+#: views/register.php:300
 msgid "Godmother's Email"
 msgstr "Correo Electrónico de la Madrina"
 
-#: views/register.php:304
+#: views/register.php:307
 msgid "Godmother's Phone"
 msgstr "Teléfono de la Madrina"
 
-#: views/register.php:326
+#: views/register.php:330
 msgid "Finish up and submit"
 msgstr "Terminar y enviar"
 
-#: views/register.php:336
+#: views/register.php:345
 msgid "Baptism date"
 msgstr "Fecha de bautismo"
 
-#: views/register.php:343
+#: views/register.php:346
+msgid ""
+"If the Schedule is not available please call the office at (213) 629-3101"
+msgstr ""
+"Si el horario no está disponible favor de llamar a la oficina de bautizos "
+"al (213) 629-3101"
+
+#: views/register.php:347
+msgid "Thank you"
+msgstr "Gracias"
+
+#: views/register.php:357
 msgid "Notes"
 msgstr "Notas"
 
-#: views/register.php:356
+#: views/register.php:371
 msgid "Submit"
 msgstr "Enviar"
 
@@ -328,3 +339,6 @@ msgstr "Emilio Venegas"
 #. Author URI of the plugin/theme
 msgid "http://www.emiliovenegas.me"
 msgstr "http://www.emiliovenegas.me"
+
+#~ msgid "Birthplace"
+#~ msgstr "Lugar de Nacimiento"

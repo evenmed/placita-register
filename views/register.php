@@ -335,7 +335,7 @@
             </div>
 
             <div class="row">
-              <div class="form-group col-sm-6 col-sm-offset-3">
+              <div class="form-group col-sm-8 col-sm-offset-2">
                 <input required type="text"
                 value="<?php
                   $baptism_date = date_create_from_format('Y-m-d H:i:s', $child[ 'baptism_date' ]);
@@ -343,6 +343,8 @@
                 ?>"
                 class="form-control datetime baptism_date" name="baptism_date"
                 placeholder="<?php _e( "Baptism date", 'laplacita'); ?>" />
+                <p class="help-block"><?php _e( "If the Schedule is not available please call the office at (213) 629-3101", 'laplacita' ); ?></p>
+                <p class="help-block"><?php _e( "Thank you", 'laplacita' ); ?></p>
               </div>
             </div>
 
