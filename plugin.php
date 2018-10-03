@@ -945,7 +945,7 @@ function sanitize_registry_data() {
     }
         
     // Last edited
-    $values['lastedited'] = time();
+    $values['lastedited'] = current_time('Y-m-d G:i:s');
 
     return $values;
 }
