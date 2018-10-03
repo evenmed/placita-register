@@ -92,7 +92,7 @@ class Baptism_Registers_Table extends WP_List_Table {
 
         $table_name = $wpdb->prefix . 'baptism_registers';
         $sql = sprintf(
-            'SELECT id, first_name, last_name, birthdate, father_phone, mother_phone, date, priest, baptism_date, amount_collected, benches, is_canceled, is_noshow, is_private
+            'SELECT id, first_name, last_name, birthdate, father_phone, mother_phone, date, priest, baptism_date, amount_collected, benches, is_canceled, is_noshow, is_private, lastedited
             FROM %s %s
             ORDER BY date DESC',
             $table_name,
@@ -317,8 +317,8 @@ class Baptism_Registers_Table extends WP_List_Table {
      */
     private function sort_data( $a, $b ) {
         // Set defaults
-        $orderby = 'first_name';
-        $order = 'asc';
+        $orderby = 'lastedited';
+        $order = 'desc';
         // If orderby is set, use this as the sort column
         if(!empty($_GET['orderby']))
         {
