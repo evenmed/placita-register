@@ -944,6 +944,8 @@ function sanitize_registry_data() {
         date( "Y-m-d H:i:s", strtotime( sanitize_text_field( $_POST['baptism_date'] ) ) ) : null;
     }
         
+    // Last edited
+    $values['lastedited'] = time();
 
     return $values;
 }
