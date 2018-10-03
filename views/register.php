@@ -58,7 +58,7 @@
             <div class="row">
               <div class="form-group col-sm-6">
                 <input required type="text" value="<?php echo $child['birthplace'] ? $child['birthplace'] : "" ?>" class="form-control" name="birthplace"
-                placeholder="<?php _e( "Birthplace", 'laplacita'); ?>" />
+                placeholder="<?php _e( "City & State of Birth", 'laplacita'); ?>" />
               </div>
               <div class="form-group col-sm-6">
                 <div data-quantity="2" class="inline-wrap">
