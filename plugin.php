@@ -12,7 +12,7 @@ License: GPL2
 
 global $placita_db_version, $bench_numbers, $per_hour_limit, $baptism_times;
 
-$placita_db_version = '1.11';
+$placita_db_version = '1.12';
 
 $bench_numbers = array('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','D18','D19','D20','D21','D22','D23','D24','D25','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17','E18','E19','E20','E21','E22','E23','E24','E25');
 
@@ -29,7 +29,7 @@ $baptism_times = array(
 );
 
 // #TODO: make this into an object with properties etc for cleaner code.
-// $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'main_phone', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'note', 'bautismal_code');
+// $registry_fields = array( 'first_name', 'middle_name', 'last_name', 'gender', 'birthdate', 'birthplace', 'main_phone', 'contact_email', 'address', 'city', 'state', 'zip', 'father_name', 'father_middle', 'father_last', 'father_email', 'father_phone', 'mother_name', 'mother_middle', 'mother_last', 'mother_email', 'mother_phone', 'mother_married_name', 'mmn_birth_certificate', 'godfather_name', 'godfather_middle', 'godfather_last', 'godfather_email', 'godfather_phone', 'godmother_name', 'godmother_middle', 'godmother_last', 'godmother_email', 'godmother_phone', 'note');
 
 // Create or update db
 function placita_install_db() {
@@ -81,7 +81,6 @@ function placita_install_db() {
             godmother_email varchar(255) NOT NULL,
             godmother_phone varchar(255) NOT NULL,
             note text NULL,
-            bautismal_code varchar(255) NULL,
             benches enum('A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','B1','B2','B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16','D17','D18','D19','D20','D21','D22','D23','D24','D25','E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12','E13','E14','E15','E16','E17','E18','E19','E20','E21','E22','E23','E24','E25') NULL,
             priest varchar(255) NULL,
             file varchar(255) NULL,
@@ -937,12 +936,13 @@ function sanitize_registry_data() {
     // $values['godmother_catholic'] = isset($_POST['godmother_catholic']) ? 
     //     1 : 0;
 
-    $values['baptism_date'] = isset($_POST['baptism_date']) ? 
-        date( "Y-m-d H:i:s", strtotime( sanitize_text_field( $_POST['baptism_date'] ) ) ) : null;
     $values['note'] = isset($_POST['note']) ? 
         sanitize_text_field( $_POST['note'] ) : "";
-    $values['bautismal_code'] = isset($_POST['bautismal_code']) ? 
-        sanitize_text_field( $_POST['bautismal_code'] ) : "";
+
+    if ( isset( $_POST['baptism_date'] ) ) {
+        $values['baptism_date'] = $_POST['baptism_date'] ? 
+        date( "Y-m-d H:i:s", strtotime( sanitize_text_field( $_POST['baptism_date'] ) ) ) : null;
+    }
         
 
     return $values;
