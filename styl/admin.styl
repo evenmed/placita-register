@@ -10,8 +10,14 @@ body
 .edit-registry-field
     white-space nowrap
 
-    &.show-input ~ .registry-update
+    &.show-input ~ .registry-update:not(.private)
         display block
+
+.baptism_date
+    .edit-registry-field.show-input.is_private ~ .registry-update
+        display: none;
+    .edit-registry-field.show-input.is_private ~ .registry-update.private
+        display: block;
 
 #baptism-preregisters-wrap
     text-transform uppercase

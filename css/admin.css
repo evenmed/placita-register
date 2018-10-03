@@ -10,7 +10,13 @@ body {
 .edit-registry-field {
   white-space: nowrap;
 }
-.edit-registry-field.show-input ~ .registry-update {
+.edit-registry-field.show-input ~ .registry-update:not(.private) {
+  display: block;
+}
+.baptism_date .edit-registry-field.show-input.is_private ~ .registry-update {
+  display: none;
+}
+.baptism_date .edit-registry-field.show-input.is_private ~ .registry-update.private {
   display: block;
 }
 #baptism-preregisters-wrap {

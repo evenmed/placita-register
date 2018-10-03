@@ -656,6 +656,7 @@ function placita_update_registry() {
                 'priest',
                 'amount_collected',
                 'baptism_date',
+                'baptism_date_private',
                 'benches',
                 'birthdate',
                 'is_canceled',
@@ -673,6 +674,7 @@ function placita_update_registry() {
     // Format the value depending on the field to be updated
     $v = $_REQUEST['value'];
     $field = $_REQUEST['field'];
+    $field = $field == 'baptism_date_private' ? 'baptism_date' : $field;
     switch($field) {
         case 'priest':
             $value = sanitize_text_field( trim($v) );

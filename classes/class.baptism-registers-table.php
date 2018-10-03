@@ -194,14 +194,22 @@ class Baptism_Registers_Table extends WP_List_Table {
             case 'baptism_date':
                 $date = date_create_from_format('Y-m-d H:i:s', $item[ $column_name ]);
                 $value = $date ? htmlentities($date->format('m/d/Y H:i')) : '';
+                $private = $item['is_private'] ? 'is_private' : '';
                 return '<span class="value-label">' . $value . '</span>' .
-                ' <a href="#" class="edit-registry-field">' . 
+                ' <a href="#" class="edit-registry-field ' . $private . '">' . 
                     __('Edit', 'laplacita') .
                     '<span class="dashicons dashicons-edit"></span>' .
                 '</a>' .
                 "<input
                     name='$column_name'
                     class='input_$column_name registry-update datetimepicker'
+                    data-registry='$id'
+                    autocomplete='off'
+                    value='". htmlentities($value) ."'
+                    />" .
+                "<input
+                    name='".$column_name."_private'
+                    class='input_" . $column_name . "_private registry-update datetimepicker private'
                     data-registry='$id'
                     autocomplete='off'
                     value='". htmlentities($value) ."'
@@ -235,7 +243,8 @@ class Baptism_Registers_Table extends WP_List_Table {
                             FROM %s
                             WHERE baptism_date = '$baptism_date'
                             AND id != $id
-                            AND is_canceled = 0",
+                            AND is_canceled = 0
+                            AND is_noshow = 0",
                             $table_name
                         ),
                         ARRAY_A

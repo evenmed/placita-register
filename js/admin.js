@@ -73,6 +73,18 @@
         }
     });
 
+    $(".input_baptism_date_private").datetimepicker({
+        format: 'm/d/Y H:i',
+        step: 30,
+        scrollMonth: false,
+        scrollTime: false,
+        scrollInput: false,
+        onSelectTime: function(ct, $this) {
+            $this.blur();
+            registryUpdate($this);
+        }
+    });
+
     // Birth date datepicker
     $(".input_birthdate").datetimepicker({
         format: 'm/d/Y',
@@ -117,7 +129,7 @@
                 value
             },
             function(r) {
-                var editRegistryLink = $this.prev('.edit-registry-field');
+                var editRegistryLink = $this.prevAll('.edit-registry-field');
                 var fieldValLabel    = $this.prevAll('.value-label').first();
 
                 $this
@@ -128,10 +140,14 @@
                 editRegistryLink.removeClass('show-input');
 
                 if ( r.success == 1 ) {
+
+                    // "Saved!" message
                     $this.after('<span style="color:green;">'+ r.message +'</span>');
+
+                    // Update field label
                     fieldValLabel.text(r.value);
 
-                    if ( field === 'baptism_date' ) {
+                    if ( field === 'baptism_date' || field === 'baptism_date_private' ) {
 
                         $('.input_benches[data-registry='+ registry +']').val('')
                             .find('option').each( function() { $(this).prop('disabled', false) } ).end()
@@ -141,6 +157,12 @@
                             r.unavailable_benches.forEach(function(b) {
                                 $('.input_benches[data-registry='+ registry +'] option[value='+ b +']').prop('disabled', true);
                             });
+                        }
+
+                        if ( field === 'baptism_date' ) {
+                            $('.input_baptism_date_private[data-registry='+ registry +']').val(r.value);
+                        } else {
+                            $('.input_baptism_date[data-registry='+ registry +']').val(r.value);
                         }
 
                     } else if ( field === 'benches' && r.previous_bench ) {
@@ -159,6 +181,19 @@
                                 $('.input_benches[data-registry='+ _registry +'] option[value='+ r.value +']').prop('disabled', true);
                             } );
                         
+                    } else if ( field === 'is_private' ) {
+
+                        if ( r.dbVal == 1 ) {
+                            // The bapt is now private
+                            $('.input_baptism_date[data-registry='+ registry +']')
+                                .prev('a.edit-registry-field')
+                                .addClass('is_private')
+                        } else {
+                            // Th bapt is no longer private
+                            $('.input_baptism_date[data-registry='+ registry +']')
+                                .prev('a.edit-registry-field')
+                                .removeClass('is_private')
+                        }
                     }
     
                     setTimeout( function() {
