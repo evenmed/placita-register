@@ -186,12 +186,12 @@
                         if ( r.dbVal == 1 ) {
                             // The bapt is now private
                             $('.input_baptism_date[data-registry='+ registry +']')
-                                .prev('a.edit-registry-field')
+                                .prevAll('a.edit-registry-field')
                                 .addClass('is_private')
                         } else {
                             // Th bapt is no longer private
                             $('.input_baptism_date[data-registry='+ registry +']')
-                                .prev('a.edit-registry-field')
+                                .prevAll('a.edit-registry-field')
                                 .removeClass('is_private')
                         }
                     }
