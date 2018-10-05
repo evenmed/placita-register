@@ -285,24 +285,27 @@ class Baptism_Registers_Table extends WP_List_Table {
                 $is_private = $item['is_private'] ? 'checked' : '';
                 return "<label><input
                     type='checkbox'
-                    class='input_is_canceled registry-update'
+                    class='input_is_canceled registry-update confirm-action'
                     name='is_canceled'
                     $is_canceled
                     data-registry='$id'
+                    data-confirm_msg='mark this registry as canceled'
                 />Canceled</label><br/>" .
                 "<label><input
                     type='checkbox'
-                    class='input_is_noshow registry-update'
+                    class='input_is_noshow registry-update confirm-action'
                     name='is_noshow'
                     $is_noshow
                     data-registry='$id'
+                    data-confirm_msg='mark this registry as noshow'
                 />No Show</label><br/>" .
                 "<label><input
                     type='checkbox'
-                    class='input_is_private registry-update'
+                    class='input_is_private registry-update confirm-action'
                     name='is_private'
                     $is_private
                     data-registry='$id'
+                    data-confirm_msg='mark this registry as private'
                 />Private</label><br/>";
 
             default:

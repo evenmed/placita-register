@@ -2,7 +2,14 @@
 
     // Ask for confirmation when certain links are clicked
     $('.confirm-action').click( function(e) {
-        return confirm( "Are you sure you want to " + $(this).attr('data-confirm_msg') + "?" );
+        confirm_msg = $(this).attr('data-confirm_msg');
+
+        if ( $(this).attr('type') === 'checkbox' && ! $(this).is(':checked') )
+            confirm_msg = 'un' + confirm_msg;
+
+        return confirm(
+            "Are you sure you want to " + confirm_msg + "?"
+            );
     } );
 
     // Show input when user clicks "Edit"
