@@ -333,7 +333,8 @@ function placita_handle_baptism_register_form() {
     $values['date'] = current_time('Y-m-d G:i:s');
 
     // Validate baptism date
-    $values['baptism_date'] = validate_baptism_date( $values['baptism_date'] );
+    if ( isset($values['baptism_date']) )
+        $values['baptism_date'] = validate_baptism_date( $values['baptism_date'] );
 
     // Generate the pdf with the sanitized values
     $pdf = placita_generate_pdf($values, false);
@@ -565,7 +566,7 @@ function validate_baptism_date($date_string) {
             return $date_string;
         }
     }
-    return '';
+    return null;
 }
 
 /**
@@ -945,7 +946,7 @@ function sanitize_registry_data() {
     }
         
     // Last edited
-    $values['lastedited'] = time();
+    $values['lastedited'] = current_time('Y-m-d G:i:s');
 
     return $values;
 }
