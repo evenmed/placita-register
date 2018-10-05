@@ -1,10 +1,15 @@
 (function($) { $(function(){
 
+    // Ask for confirmation when certain links are clicked
+    $('.confirm-action').click( function(e) {
+        return confirm( "Are you sure you want to " + $(this).attr('data-confirm_msg') + "?" );
+    } );
+
     // Show input when user clicks "Edit"
     $('.edit-registry-field').click(function(e) {
         e.preventDefault();
         $(this).addClass("show-input");
-    })
+    });
 
     // Registries export datetimepicker
     $(".registries_export_date, .print_certificates_date").datetimepicker({

@@ -17,13 +17,13 @@ $testListTable->prepare_items();
 
             if ( $deleted > 0 ) {
                 ?>
-                <div class="alert alert-success" role="alert">
+                <div class="notice notice-warning" role="alert">
                     Registry was successfully deleted.
                 </div>
                 <?php
             } else {
                 ?>
-                <div class="alert alert-warning" role="alert">
+                <div class="notice notice-error" role="alert">
                     An error ocurred while deleting the registry. Please try again.
                 </div>
                 <?php

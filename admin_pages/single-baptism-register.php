@@ -333,7 +333,7 @@ $child = $results[0];
         <div class="row">
             <div class="form-group col-6 offset-3 text-center">
                 <p class="mt-2">Or...</p>
-                <input type="submit" name="delete-registry" class="btn btn-danger" value="Delete Registry" />
+                <input type="submit" name="delete-registry" class="btn btn-danger confirm-action" value="Delete Registry" data-confirm_msg="delete this registry" />
             </div>
         </div>
     </form>
