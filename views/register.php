@@ -329,7 +329,7 @@
           <h2 class="fs-title"><?php _e( "Finish", 'laplacita' ); ?></h2>
           <h3 class="fs-subtitle"><?php _e( "Finish up and submit", 'laplacita' ); ?></h3>
 
-          <section>
+          <!-- <section>
             <div class="row">
               <h2 class="fs-title"><?php _e( "Baptism Date", 'laplacita' ); ?></h2>
             </div>
@@ -346,7 +346,7 @@
               </div>
             </div>
 
-          </section>
+          </section> -->
 
           <section>
             <div class="row">
