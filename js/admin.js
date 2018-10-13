@@ -107,6 +107,7 @@
         }
     });
 
+    // Prevent submit on enter
     $('.registry-update').keydown(function(e) {
         if(e.keyCode == 13) {
             e.preventDefault();
@@ -115,10 +116,77 @@
         }
     });
 
+    // Create pretty bench select and hide default one
+    $('.input_benches').hide().after(
+        function() {
+            const val = $(this).val();
+            const reg = $(this).attr('data-registry');
+            return (
+                "<span " +
+                "class='placita-select registry-update' " +
+                "data-registry='"+reg+"' " +
+                "data-value='"+val+"' " +
+                "></span>"
+            );
+        }
+    );
+
+    // Show the bench table
+    $('.benches').on('click', '.placita-select', function(e) {
+        e.preventDefault();
+        
+        const reg = $(this).attr('data-registry');
+        const disabled = $(this).prevAll('.input_benches').find('option:disabled');
+        const current = $(this).prevAll('.input_benches').find('option:selected');
+
+        $.each( disabled, function(i, dis) {
+            const value = $(dis).val();
+            $( '#pretty-bench-select-table td[data-value="'+ value +'"]' ).addClass('disabled');
+        } );
+        
+        if (current) {
+            const value = current.val();
+            $( '#pretty-bench-select-table td[data-value="'+ value +'"]' )
+                .addClass('current')
+                .removeClass('disabled');
+        }
+
+        $("body").addClass("show-bench-select");
+
+        $('#pretty-bench-select-table').attr("data-registry", reg); 
+    });
+
+    // Hide the bench table when clicking outside of it
+    $('.pretty-bench-select').click(function(e){
+        if ( $(e.target).hasClass('pretty-bench-select') )
+            hidePrettyBenchSelect();
+    });
+
+    // Choose a bench
+    $('#pretty-bench-select-table td').click(function() {
+        if ( $(this).hasClass('disabled') || $(this).hasClass('current') ) return false;
+
+        const val = $(this).attr('data-value');
+        const reg = $('#pretty-bench-select-table').attr('data-registry');
+
+        $('.input_benches[data-registry='+ reg +']')
+            .val(val)
+            .change()
+
+        hidePrettyBenchSelect();
+    });
+
+
     $('.registry-update:not(.datetimepicker)')
         .change(function() {
             registryUpdate($(this));
-        });
+    });
+
+    // Hide the bench table
+    function hidePrettyBenchSelect() {
+        $('body').removeClass('show-bench-select');
+        $( '#pretty-bench-select-table td' ).removeClass('disabled').removeClass('current');
+    }
 
     function registryUpdate( $this ) {
 
@@ -181,6 +249,8 @@
 
                         const baptism_date = $('.input_baptism_date[data-registry='+ registry +']').val();
 
+                        $this.nextAll('.placita-select').attr('data-value', r.value);
+
                         $('.input_baptism_date')
                             .filter( function(){ return this.value==baptism_date } )
                             .each( function() {
@@ -209,7 +279,9 @@
                     }
     
                     setTimeout( function() {
-                        $this.next('span').fadeOut();
+                        const successMsg = $this.next('span')
+                        
+                        successMsg.fadeOut(500, function() {successMsg.remove()} );
                     }, 700 );
                 } else {
                     alert(r.message);

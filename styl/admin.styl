@@ -1,6 +1,12 @@
 body
     background-color: #f1f1f1;
 
+    &.show-bench-select
+        overflow hidden
+
+        .pretty-bench-select
+            display flex
+
 .registry-update
     display none
 
@@ -18,6 +24,34 @@ body
         display: none;
     .edit-registry-field.show-input.is_private ~ .registry-update.private
         display: block;
+
+.placita-select
+    height: 20px;
+    width: 100%;
+    border: 1px solid #999;
+    display: none;
+    position: relative;
+    cursor pointer
+
+    &:after
+        content: "";
+        width: 14px;
+        height: 7px;
+        display: block;
+        background-image: linear-gradient(to top right, transparent 50%, #999 50%), linear-gradient(to top left, transparent 50%, #999 50%);
+        background-size: 7px 7px;
+        background-position: 0 0, 7px 0;
+        background-repeat: no-repeat;
+        position: absolute;
+        right: 5px;
+        top: 6px;
+    
+    &:before
+        content: attr(data-value);
+        position: absolute;
+        display: block;
+        left: 5px;
+        height: 100%;
 
 #baptism-preregisters-wrap
     text-transform uppercase
@@ -40,3 +74,61 @@ body
     input[type="submit"]
         margin-top 10px
         box-shadow 0 2px 5px #555
+
+// Pretty bench select
+.pretty-bench-select
+    display none
+    width: 100vw
+    height: 100vh
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 999999
+    align-items: center
+    justify-content: center
+    background: rgba(0,0,0,0.7)
+
+    .pretty-bench-select-inner
+        width: 500px;
+        max-width: 90%;
+        height: 500px;
+        overflow-y: scroll;
+        padding: 15px;
+        background: white;
+        border-radius: 5px;
+        box-shadow: 0 4px 5px 2px rgba(0,0,0,0.7);
+        box-sizing border-box
+
+        table
+            width 100%
+
+            thead, tbody
+                tr 
+                    * // All th and td
+                        border solid black
+                        border-width 1px 1px 0 0
+                        text-align center
+                        height 25px
+
+                        &:first-child
+                            border-left-width 1px
+                    
+                    td
+                        cursor pointer
+                        transition background-color 0.2s ease
+
+                        &:hover
+                            background-color rgba(0,0,0,0.1)
+
+                        &.disabled
+                            background red
+                            color white
+                            cursor not-allowed
+                        
+                        &.current
+                            background green 
+                            color white
+                            cursor default
+
+                &:last-child tr:last-child *
+                    border-bottom-width 1px

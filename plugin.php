@@ -289,7 +289,7 @@ function placita_admin_scripts() {
     }
 
     // Our custom styles
-    wp_enqueue_style( 'placita_admin_styles', plugin_dir_url( __FILE__ ) . 'css/admin.min.css' );
+    wp_enqueue_style( 'placita_admin_styles', plugin_dir_url( __FILE__ ) . 'css/admin.css' );
 
     // Our custom scripts
     wp_enqueue_script( 
@@ -1155,7 +1155,7 @@ function placita_export_registries() {
 
     $html .= '</tbody>';
     $html .= '</table>';
-    $html .= '</div>';
+    $html .= '</div>'; // #TODO: Remove?
 
     $mpdf = new mPDF('', 'Letter-L', 0, 'dejavuSans', 6, 6, 6, 0);
 

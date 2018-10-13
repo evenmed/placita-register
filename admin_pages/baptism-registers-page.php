@@ -58,3 +58,39 @@ $testListTable->prepare_items();
         </form>
 
     </div>
+
+    <div class="pretty-bench-select">
+        <div class="pretty-bench-select-inner">
+
+            <?php
+            $letters = array('E', 'D', 'C', 'B', 'A');
+
+            echo '<table cellspacing=0 id="pretty-bench-select-table">';
+
+            echo '<thead>';
+            echo '<tr>';
+            foreach( $letters as $l ) {
+                echo '<th class="column-'. $l .'">';
+                echo $l;
+                echo '</th>';
+            }
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+            
+            for( $i=1; $i<26; $i++ ) {
+                echo '<tr>';
+                foreach( $letters as $l ) {
+                    echo '<td data-value="'.$l.$i.'" class="number row-'. $i .' number-column-'. $l .'">';
+                    echo $l . ' - ' . $i;
+                    echo '</td>';
+                }
+                echo '</tr>';
+            }
+
+            echo '</tbody>';
+            echo '</table>';
+            ?>
+            
+        </div>
+    </div>
